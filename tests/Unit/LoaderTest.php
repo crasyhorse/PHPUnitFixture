@@ -2,15 +2,15 @@
 
 namespace CrasyHorse\Tests\Unit;
 
-use CrasyHorse\Tests\TestCase;
 use CrasyHorse\Testing\Config;
-use CrasyHorse\Testing\Loader\Loader;
 use CrasyHorse\Testing\Loader\File;
+use CrasyHorse\Testing\Loader\Loader;
+use CrasyHorse\Tests\TestCase;
 
 class LoaderTest extends TestCase
 {
     use Config;
-    
+
     /**
      * The main configuration object.
      *
@@ -26,13 +26,13 @@ class LoaderTest extends TestCase
             'sources' => [
                 'default' => [
                     'driver' => 'local',
-                    'rootpath' => implode(DIRECTORY_SEPARATOR, array(__DIR__, '..', 'filesystem', 'data'))
+                    'rootpath' => implode(DIRECTORY_SEPARATOR, [__DIR__, '..', 'filesystem', 'data']),
                 ],
                 'alternative' => [
                     'driver' => 'local',
-                    'rootpath' => implode(DIRECTORY_SEPARATOR, array(__DIR__, '..', 'filesystem', 'alternative'))
-                ]
-            ]
+                    'rootpath' => implode(DIRECTORY_SEPARATOR, [__DIR__, '..', 'filesystem', 'alternative']),
+                ],
+            ],
         ];
     }
 
@@ -41,7 +41,15 @@ class LoaderTest extends TestCase
      */
     public function loads_a_file_if_an_existing_driver_is_used(): void
     {
-        $expected = new File('alternative_fixture.json', '', $this->config('sources.alternative')['rootpath'].'/', 92, 'application/json', 1627230274);
+        $expected = new File(
+            'alternative_fixture.json',
+            '',
+            $this->config('sources.alternative')['rootpath'].'\\',
+            92,
+            'application/json',
+            1635316895
+        );
+
         $content = <<<EOL
 {
   "Hello": {
@@ -50,7 +58,7 @@ class LoaderTest extends TestCase
 }
 EOL;
         $expected->setContent($content);
-        
+
         $actual = Loader::loadFixture('alternative_fixture.json', $this->config('sources.alternative'));
 
         $this->assertEquals($expected, $actual);

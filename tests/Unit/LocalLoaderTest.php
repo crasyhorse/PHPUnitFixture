@@ -2,15 +2,15 @@
 
 namespace CrasyHorse\Tests\Unit;
 
-use CrasyHorse\Tests\TestCase;
 use CrasyHorse\Testing\Config;
-use CrasyHorse\Testing\Loader\LocalLoader;
 use CrasyHorse\Testing\Loader\File;
+use CrasyHorse\Testing\Loader\LocalLoader;
+use CrasyHorse\Tests\TestCase;
 
 class LocalLoaderTest extends TestCase
 {
     use Config;
-    
+
     /**
      * The main configuration object.
      *
@@ -28,18 +28,18 @@ class LocalLoaderTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        
+
         $this->configuration = [
             'sources' => [
                 'default' => [
                     'driver' => 'local',
-                    'rootpath' => implode(DIRECTORY_SEPARATOR, array(__DIR__, '..', 'filesystem', 'data'))
+                    'rootpath' => implode(DIRECTORY_SEPARATOR, [__DIR__, '..', 'filesystem', 'data']),
                 ],
                 'alternative' => [
                     'driver' => 'local',
-                    'rootpath' => implode(DIRECTORY_SEPARATOR, array(__DIR__, '..', 'filesystem', 'alternative'))
-                ]
-            ]
+                    'rootpath' => implode(DIRECTORY_SEPARATOR, [__DIR__, '..', 'filesystem', 'alternative']),
+                ],
+            ],
         ];
 
         $this->loader = new LocalLoader();
@@ -50,7 +50,15 @@ class LocalLoaderTest extends TestCase
      */
     public function load_can_load_an_existing_file_from_local_filesystem(): void
     {
-        $expected = new File('alternative_fixture.json', '', $this->config('sources.alternative')['rootpath'].'/', 92, 'application/json', 1627230274);
+        $expected = new File(
+            'alternative_fixture.json',
+            '',
+            $this->config('sources.alternative')['rootpath'].'\\',
+            92,
+            'application/json',
+            1635316895
+        );
+
         $content = <<<EOL
 {
   "Hello": {
@@ -59,7 +67,7 @@ class LocalLoaderTest extends TestCase
 }
 EOL;
         $expected->setContent($content);
-        
+
         $this->loader = new LocalLoader();
 
         $actual = $this->loader->load('alternative_fixture.json', $this->config('sources.alternative'));

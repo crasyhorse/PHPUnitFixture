@@ -2,20 +2,13 @@
 
 namespace CrasyHorse\Tests\Unit;
 
-use CrasyHorse\Tests\TestCase;
 use CrasyHorse\Testing\Config;
 use CrasyHorse\Testing\Reader\Reader;
+use CrasyHorse\Tests\TestCase;
 
 class ReaderTest extends TestCase
 {
     use Config;
-    
-    /**
-     * The main configuration object.
-     *
-     * @var array
-     */
-    protected $config;
 
     public function setUp(): void
     {
@@ -25,13 +18,13 @@ class ReaderTest extends TestCase
             'sources' => [
                 'default' => [
                     'driver' => 'local',
-                    'rootpath' => implode(DIRECTORY_SEPARATOR, array(__DIR__, '..', 'filesystem', 'data'))
+                    'rootpath' => implode(DIRECTORY_SEPARATOR, [__DIR__, '..', 'filesystem', 'data']),
                 ],
                 'alternative' => [
                     'driver' => 'local',
-                    'rootpath' => implode(DIRECTORY_SEPARATOR, array(__DIR__, '..', 'filesystem', 'alternative'))
-                ]
-            ]
+                    'rootpath' => implode(DIRECTORY_SEPARATOR, [__DIR__, '..', 'filesystem', 'alternative']),
+                ],
+            ],
         ];
     }
 

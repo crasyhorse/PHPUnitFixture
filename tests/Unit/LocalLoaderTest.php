@@ -12,13 +12,6 @@ class LocalLoaderTest extends TestCase
     use Config;
 
     /**
-     * The main configuration object.
-     *
-     * @var array
-     */
-    protected $config;
-
-    /**
      * The loader to use to load files.
      *
      * @var CrasyHorse\Testing\Loader\LocalLoader

@@ -11,13 +11,6 @@ class LoaderTest extends TestCase
 {
     use Config;
 
-    /**
-     * The main configuration object.
-     *
-     * @var array
-     */
-    protected $config;
-
     public function setUp(): void
     {
         parent::setUp();

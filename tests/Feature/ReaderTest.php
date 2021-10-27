@@ -34,17 +34,24 @@ class ReaderTest extends TestCase
      */
     public function read_returns_the_processed_file_contents_as_json_string(): void
     {
-        $expected = <<<EOL
+        $temp = <<<EOL
 {
-  "Hello": {
-    "content": "This is another simple Json file for testing purposes."
-  }
+    "data": [
+        {
+            "key": "FIXTURE-003",
+            "text": "Once again a sample text!",
+            "status": "open",
+            "updated": "2021-10-27 10:37:14.0"
+        }
+    ]
 }
 EOL;
 
-        $actual = Reader::read('alternative_fixture.json', $this->config('sources.alternative'));
+        $expected = preg_replace('~\R~u', "\r\n", $temp);
 
-        $this->assertEquals($actual, $expected);
+        $actual = Reader::read('fixture-003.json', $this->config('sources.alternative'));
+
+        $this->assertEquals($expected, $actual);
     }
 
     /**
@@ -53,7 +60,8 @@ EOL;
      */
     public function read_returns_null_if_there_is_no_reader_for_the_given_mime_type(): void
     {
-        $actual = Reader::read('alternative_csv_fixture.csv', $this->config('sources.alternative'));
+        $fixtureWithUnknownMimeType = 'fixture-999.csv';
+        $actual = Reader::read($fixtureWithUnknownMimeType, $this->config('sources.alternative'));
 
         $this->assertNull($actual);
     }

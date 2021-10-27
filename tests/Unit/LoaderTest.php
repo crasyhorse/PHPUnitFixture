@@ -35,24 +35,30 @@ class LoaderTest extends TestCase
     public function loads_a_file_if_an_existing_driver_is_used(): void
     {
         $expected = new File(
-            'alternative_fixture.json',
+            'fixture-003.json',
             '',
             $this->config('sources.alternative')['rootpath'].'\\',
-            92,
+            212.0,
             'application/json',
-            1635316895
+            1635323814
         );
 
-        $content = <<<EOL
+        $temp = <<<EOL
 {
-  "Hello": {
-    "content": "This is another simple Json file for testing purposes."
-  }
+    "data": [
+        {
+            "key": "FIXTURE-003",
+            "text": "Once again a sample text!",
+            "status": "open",
+            "updated": "2021-10-27 10:37:14.0"
+        }
+    ]
 }
 EOL;
-        $expected->setContent($content);
 
-        $actual = Loader::loadFixture('alternative_fixture.json', $this->config('sources.alternative'));
+        $content = preg_replace('~\R~u', "\r\n", $temp);
+        $expected->setContent($content);
+        $actual = Loader::loadFixture('fixture-003.json', $this->config('sources.alternative'));
 
         $this->assertEquals($expected, $actual);
     }
@@ -67,6 +73,6 @@ EOL;
         $source = $this->config('sources.alternative');
         $source['driver'] = 'nonExistingDriver';
 
-        Loader::loadFixture('alternative_fixture.json', $source);
+        Loader::loadFixture('fixture-003.json', $source);
     }
 }

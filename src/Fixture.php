@@ -3,17 +3,16 @@
 namespace CrasyHorse\Testing;
 
 use CrasyHorse\Testing\Exceptions\SourceNotFoundException;
-use CrasyHorse\Testing\Config;
 use CrasyHorse\Testing\Reader\Reader;
 
 class Fixture
 {
     use Config;
-    
+
     /**
-     * The contents of the fixture as JSON string.
+     * The contents of the fixture(s) in an array.
      *
-     * @var string|null
+     * @var array|null
      */
     protected $content;
 
@@ -26,7 +25,7 @@ class Fixture
 
     public function __construct(array $config = [])
     {
-        $this->content = '';
+        $this->content = [];
 
         if (!empty($config)) {
             $this->configuration = $this->validate($config);
@@ -39,19 +38,25 @@ class Fixture
         }
     }
 
-
     /**
      * Loads and processes a fixture. It returns an object of type
-     * \CrasyHorse\Testing\Fixture. The file contents can be get via
-     * toArray or toJson
+     * \CrasyHorse\Testing\Fixture. The file contents can be returned via
+     * toArray or toJson.
      *
-     * @param string $path
+     * @param mixed $fixture Path to a single fixture file or an array
+     *                       containing a list of filenames
      *
      * @return \CrasyHorse\Testing\Fixture
      */
-    public function fixture(string $path) : self
+    public function fixture($fixture): self
     {
-        $this->content = Reader::read($path, $this->source);
+        if (is_string($fixture)) {
+            $fixtures[] = $fixture;
+        }
+
+        foreach ($fixtures as $path) {
+            $this->content[] = json_decode(Reader::read($path, $this->source), true);
+        }
 
         return $this;
     }
@@ -73,12 +78,13 @@ class Fixture
     /**
      * Returns the file's content as array. If the file has been empty, an empty
      * array will be returned.
-     *
-     * @return array
      */
     public function toArray(): array
     {
-        $value = $this->content ? json_decode($this->content, true) : [];
+        $value = [];
+        foreach ($this->content as $fixture) {
+            $value = array_merge_recursive($value, $fixture);
+        }
 
         return $value;
     }

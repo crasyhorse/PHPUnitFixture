@@ -50,7 +50,10 @@ class Fixture
      */
     public function fixture($fixture): self
     {
+        $fixtures = $fixture;
+
         if (is_string($fixture)) {
+            $fixtures = [];
             $fixtures[] = $fixture;
         }
 
@@ -96,7 +99,7 @@ class Fixture
      */
     public function toJson()
     {
-        return $this->content;
+        return json_encode($this->content);
     }
 
     /**

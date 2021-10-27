@@ -1,5 +1,6 @@
 {
     "name": "crasyhorse/testingfixture",
+    "version": "0.1.0",
     "description": "Adds a fixture command to PHP-Unit tests like the one in Cypress.",
     "keywords": ["Laravel","Fixture","JSON","Testing"],
     "type": "library",
@@ -7,7 +8,6 @@
         "php": "^7.4 | ^8.0",
         "adbario/php-dot-notation": "2.x-dev",
         "fandogh/php-ubjson": "^0.2",
-        "faytekin/lzw": "^1.0",
         "laravel/framework": "^8.51"
     },
     "require-dev": {

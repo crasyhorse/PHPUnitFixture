@@ -15,7 +15,7 @@ interface ReaderContract
      *
      * @param array $source Configuration object that tells us which Loader to use and where to find the file to read.
      *
-     * @return string|null
+     * @return mixed
      *
      */
     public function read(File $file);

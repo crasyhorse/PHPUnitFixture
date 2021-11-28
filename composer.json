@@ -1,23 +1,14 @@
 {
-    "name": "crasyhorse/testingfixture",
+    "name": "crasyhorse/phpunit-fixture",
+    "version": "0.2.0",
     "description": "Adds a fixture command to PHP-Unit tests like the one in Cypress.",
     "keywords": ["Laravel","Fixture","JSON","Testing"],
     "type": "library",
-    "require": {
-        "php": "^7.4 | ^8.0",
-        "adbario/php-dot-notation": "2.x-dev",
-        "fandogh/php-ubjson": "^0.2",
-        "faytekin/lzw": "^1.0",
-        "laravel/framework": "^8.51"
-    },
-    "require-dev": {
-        "mockery/mockery": "^1.4.2",
-        "orchestra/testbench": "^6.0",
-        "phpunit/phpunit": "^9.3.3",
-        "vimeo/psalm": "^4.8",
-        "league/flysystem-memory": "^1.0"
-    },
     "license": "MIT",
+    "authors": [{
+        "name": "Florian Weidinger",
+        "email": "CrasyHorse@gmx.net"
+    }],
     "autoload": {
         "psr-4": {
             "CrasyHorse\\Testing\\": "src/"
@@ -28,6 +19,30 @@
             "CrasyHorse\\Tests\\": "tests/"
         }
     },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url":  "ssh://git@gitea.sysz.dom:32022/Packages/phpUnitFixture.git"
+        },
+        {
+            "type": "vcs",
+            "url":  "https://github.com/crasyhorse/PHPUnitFixture.git"
+        }
+    ],
+    "require": {
+        "php": "^7.4 | ^8.0",
+        "adbario/php-dot-notation": "2.x-dev",
+        "fandogh/php-ubjson": "^0.2",
+        "laravel/framework": "^8.51",
+        "pcrov/jsonreader": "dev-master"
+    },
+    "require-dev": {
+        "mockery/mockery": "^1.4.2",
+        "orchestra/testbench": "^6.0",
+        "phpunit/phpunit": "^9.3.3",
+        "vimeo/psalm": "^4.8",
+        "league/flysystem-memory": "^1.0"
+    },
     "scripts": {
         "test": "vendor/bin/phpunit",
         "test-f": "vendor/bin/phpunit --filter",
@@ -35,11 +50,5 @@
         "psalm": "vendor/bin/psalm",
         "psalm-i": "vendor/bin/psalm --show-info=true"
     },
-    "authors": [
-        {
-            "name": "Florian Weidinger",
-            "email": "CrasyHorse@gmx.net"
-        }
-    ],
     "minimum-stability": "dev"
 }

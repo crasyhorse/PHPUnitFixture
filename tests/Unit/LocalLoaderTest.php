@@ -2,21 +2,14 @@
 
 namespace CrasyHorse\Tests\Unit;
 
-use CrasyHorse\Tests\TestCase;
 use CrasyHorse\Testing\Config;
-use CrasyHorse\Testing\Loader\LocalLoader;
 use CrasyHorse\Testing\Loader\File;
+use CrasyHorse\Testing\Loader\LocalLoader;
+use CrasyHorse\Tests\TestCase;
 
 class LocalLoaderTest extends TestCase
 {
     use Config;
-    
-    /**
-     * The main configuration object.
-     *
-     * @var array
-     */
-    protected $config;
 
     /**
      * The loader to use to load files.
@@ -28,18 +21,18 @@ class LocalLoaderTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        
+
         $this->configuration = [
             'sources' => [
                 'default' => [
                     'driver' => 'local',
-                    'rootpath' => implode(DIRECTORY_SEPARATOR, array(__DIR__, '..', 'filesystem', 'data'))
+                    'rootpath' => implode(DIRECTORY_SEPARATOR, [__DIR__, '..', 'filesystem', 'data']),
                 ],
                 'alternative' => [
                     'driver' => 'local',
-                    'rootpath' => implode(DIRECTORY_SEPARATOR, array(__DIR__, '..', 'filesystem', 'alternative'))
-                ]
-            ]
+                    'rootpath' => implode(DIRECTORY_SEPARATOR, [__DIR__, '..', 'filesystem', 'alternative']),
+                ],
+            ],
         ];
 
         $this->loader = new LocalLoader();
@@ -50,19 +43,34 @@ class LocalLoaderTest extends TestCase
      */
     public function load_can_load_an_existing_file_from_local_filesystem(): void
     {
-        $expected = new File('alternative_fixture.json', '', $this->config('sources.alternative')['rootpath'].'/', 92, 'application/json', 1627230274);
-        $content = <<<EOL
+        $expected = new File(
+            'fixture-003.json',
+            '',
+            $this->config('sources.alternative')['rootpath'].'/',
+            212.0,
+            'application/json',
+            1637516068
+        );
+
+        $temp = <<<EOL
 {
-  "Hello": {
-    "content": "This is another simple Json file for testing purposes."
-  }
+    "data": [
+        {
+            "key": "FIXTURE-003",
+            "text": "Once again a sample text!",
+            "status": "open",
+            "updated": "2021-10-27 10:37:14.0"
+        }
+    ]
 }
 EOL;
+
+        $content = preg_replace('~\R~u', "\r\n", $temp);
         $expected->setContent($content);
-        
+
         $this->loader = new LocalLoader();
 
-        $actual = $this->loader->load('alternative_fixture.json', $this->config('sources.alternative'));
+        $actual = $this->loader->load('fixture-003.json', $this->config('sources.alternative'));
 
         $this->assertEquals($expected, $actual);
     }
@@ -74,6 +82,7 @@ EOL;
     {
         $this->expectException(\League\Flysystem\FileNotFoundException::class);
 
-        $actual = $this->loader->load('missing_fixture.json', $this->config('sources.alternative'));
+        $nonexistingFixtureFilename = 'fixture-999.json';
+        $actual = $this->loader->load($nonexistingFixtureFilename, $this->config('sources.alternative'));
     }
 }

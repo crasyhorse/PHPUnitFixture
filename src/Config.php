@@ -32,7 +32,8 @@ trait Config
         'sources' => [
             'default' => [
                 'driver' => 'local',
-                'rootpath' => __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'tests' . DIRECTORY_SEPARATOR . 'filesystem' . DIRECTORY_SEPARATOR. 'data' . DIRECTORY_SEPARATOR
+                'rootpath' => __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'tests' . DIRECTORY_SEPARATOR . 'filesystem' . DIRECTORY_SEPARATOR. 'data' . DIRECTORY_SEPARATOR,
+                'default_file_extension' => 'json'
             ]
         ]
     ];
@@ -45,7 +46,8 @@ trait Config
      */
     public $validationSchema = [
         'driver' => '',
-        'rootpath' => ''
+        'rootpath' => '',
+        'default_file_extension' => ''
     ];
 
     /**

@@ -2,8 +2,13 @@
 
 namespace CrasyHorse\Testing\Loader;
 
-use CrasyHorse\Testing\Loader\File;
-
+/**
+ * This interface defines the method "load". That is the main method all
+ * Loader classes have to implement.
+ *
+ * @author Florian Weidinger
+ * @since 0.1.0
+ */
 interface LoaderContract
 {
     /**

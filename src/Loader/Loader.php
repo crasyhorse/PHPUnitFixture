@@ -6,10 +6,11 @@ use CrasyHorse\Testing\Loader\LocalLoader;
 use CrasyHorse\Testing\Exceptions\LoaderNotFoundException;
 
 /**
- * This class works as a factory for all kinds of loader classes. It also manages the usage of
+ * This class works as a factory for all kinds of Loader classes. It also manages the usage of
  * the loaders.
  *
  * @author Florian Weidinger
+ * @since 0.1.0
  */
 class Loader
 {
@@ -39,14 +40,38 @@ class Loader
             throw new LoaderNotFoundException("", 0, null, $source['driver']);
         }
 
-        $file = self::load($path, $source);
+        $filename = self::fixFileExtension($source['default_file_extension'], $path);
+        
+        $file = self::load($filename, $source);
     
         return $file;
     }
 
-    protected static function checkIfSelectedLoaderExists(string $driver): bool
+    /**
+     * Returns false the given loader does not exist in the loader chain.
+     *
+     * @param string $loader The loader to be used to read the fixture
+     *
+     * @return bool
+     */
+    protected static function checkIfSelectedLoaderExists(string $loader): bool
     {
-        return array_key_exists($driver, self::$loaderChain);
+        return array_key_exists($loader, self::$loaderChain);
+    }
+
+    /**
+     * If $path does not have a file extension the default file extension set in the
+     * configuration is added to $path.
+     *
+     * @param string $defaultFileExtension The default file extension from the config object
+     * @param string $path The filename to check
+     *
+     * @return string
+     */
+    protected static function fixFileExtension(string $defaultFileExtension, string $path): string
+    {
+        $extension = pathinfo($path, PATHINFO_EXTENSION);
+        return $extension ? $path : $path . ".{$defaultFileExtension}";
     }
 
     /**

@@ -8,12 +8,15 @@ use CrasyHorse\Testing\Loader\File;
 use League\Flysystem\Adapter\AbstractAdapter;
 
 /**
+ * Abstract base class for all Loader classes. It defines the method "readFile" used
+ * by every Loader to get read access to the fixture file. It also defines the
+ * abstract method "initLoader" every Loader has to implement.
  *
  * @author Florian Weidinger
+ * @since 0.1.0
  */
 abstract class AbstractLoader implements LoaderContract
 {
- 
     /**
      * The Flysystem\Filesystem used to read the file
      *
@@ -58,6 +61,9 @@ abstract class AbstractLoader implements LoaderContract
     }
 
     /**
+     * Get the path prefix.
+     *
+     * @param \League\Flysystem\Adapter\AbstractAdapter $adapter The Flysystem adapter in use.
      *
      * @return string|null
      */

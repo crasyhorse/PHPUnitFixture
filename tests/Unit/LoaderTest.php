@@ -2,21 +2,14 @@
 
 namespace CrasyHorse\Tests\Unit;
 
-use CrasyHorse\Tests\TestCase;
 use CrasyHorse\Testing\Config;
-use CrasyHorse\Testing\Loader\Loader;
 use CrasyHorse\Testing\Loader\File;
+use CrasyHorse\Testing\Loader\Loader;
+use CrasyHorse\Tests\TestCase;
 
 class LoaderTest extends TestCase
 {
     use Config;
-    
-    /**
-     * The main configuration object.
-     *
-     * @var array
-     */
-    protected $config;
 
     public function setUp(): void
     {
@@ -26,11 +19,29 @@ class LoaderTest extends TestCase
             'sources' => [
                 'default' => [
                     'driver' => 'local',
-                    'rootpath' => implode(DIRECTORY_SEPARATOR, array(__DIR__, '..', 'filesystem', 'data'))
+                    'rootpath' => implode(DIRECTORY_SEPARATOR, [__DIR__, '..', 'filesystem', 'data']),
+                    'default_file_extension' => 'json',
                 ],
                 'alternative' => [
                     'driver' => 'local',
-                    'rootpath' => implode(DIRECTORY_SEPARATOR, array(__DIR__, '..', 'filesystem', 'alternative'))
+                    'rootpath' => implode(DIRECTORY_SEPARATOR, [__DIR__, '..', 'filesystem', 'alternative']),
+                    'default_file_extension' => 'json',
+                ],
+            ],
+        ];
+    }
+
+    public function filename_provider(): array
+    {
+        return [
+            'the help of an existing driver' => [
+                [
+                    'filename' => 'fixture-003.json',
+                ]
+            ],
+            'the default file extension if the given fixture does not have one' => [
+                [
+                    'filename' => 'fixture-003',
                 ]
             ]
         ];
@@ -38,20 +49,35 @@ class LoaderTest extends TestCase
 
     /**
      * @test
+     * @dataProvider filename_provider
      */
-    public function loads_a_file_if_an_existing_driver_is_used(): void
+    public function loads_a_file(array $data): void
     {
-        $expected = new File('alternative_fixture.json', '', $this->config('sources.alternative')['rootpath'].'/', 92, 'application/json', 1627230274);
-        $content = <<<EOL
+        $expected = new File(
+            'fixture-003.json',
+            '',
+            $this->config('sources.alternative')['rootpath'].'/',
+            212.0,
+            'application/json',
+            1637516068
+        );
+
+        $temp = <<<EOL
 {
-  "Hello": {
-    "content": "This is another simple Json file for testing purposes."
-  }
+    "data": [
+        {
+            "key": "FIXTURE-003",
+            "text": "Once again a sample text!",
+            "status": "open",
+            "updated": "2021-10-27 10:37:14.0"
+        }
+    ]
 }
 EOL;
+
+        $content = preg_replace('~\R~u', "\r\n", $temp);
         $expected->setContent($content);
-        
-        $actual = Loader::loadFixture('alternative_fixture.json', $this->config('sources.alternative'));
+        $actual = Loader::loadFixture($data['filename'], $this->config('sources.alternative'));
 
         $this->assertEquals($expected, $actual);
     }
@@ -66,6 +92,6 @@ EOL;
         $source = $this->config('sources.alternative');
         $source['driver'] = 'nonExistingDriver';
 
-        Loader::loadFixture('alternative_fixture.json', $source);
+        Loader::loadFixture('fixture-003.json', $source);
     }
 }

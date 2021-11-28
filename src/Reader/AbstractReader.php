@@ -6,8 +6,12 @@ use CrasyHorse\Testing\Reader\ReaderContract;
 use CrasyHorse\Testing\Loader\File;
 
 /**
+ * Abstract base class for all Reader classes. It implements the "read" method
+ * defined by CrasyHorse\Testing\Reader\ReaderContract and it also provides
+ * the abstract method "doRead" every Reader has to implement.
  *
  * @author Florian Weidinger
+ * @since 0.1.0
  */
 abstract class AbstractReader implements ReaderContract
 {
@@ -34,7 +38,7 @@ abstract class AbstractReader implements ReaderContract
      *
      * @param \CrasyHorse\Testing\Loader\File $file
      *
-     * @return string|null
+     * @return array
      */
-    abstract protected function doRead(File $file);
+    abstract protected function doRead(File $file): array;
 }

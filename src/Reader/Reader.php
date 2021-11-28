@@ -8,8 +8,11 @@ use CrasyHorse\Testing\Reader\UbJsonReader;
 use League\Flysystem\FileNotFoundException;
 
 /**
+ * This class works as a factory for all kinds of Reader classes. It also manages the usage of
+ * the readers.
  *
  * @author Florian Weidinger
+ * @since 0.1.0
  */
 class Reader
 {
@@ -34,7 +37,7 @@ class Reader
      *
      * @param array $source Configuration object that tells us which Loader to use and where to find the file to read.
      *
-     * @return string|null
+     * @return mixed
      *
      */
     public static function read(string $path, array $source)

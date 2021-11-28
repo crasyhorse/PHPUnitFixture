@@ -1,21 +1,14 @@
 <?php
 
-namespace CrasyHorse\Tests\Unit;
+namespace CrasyHorse\Tests\Feature;
 
-use CrasyHorse\Tests\TestCase;
 use CrasyHorse\Testing\Config;
 use CrasyHorse\Testing\Reader\Reader;
+use CrasyHorse\Tests\TestCase;
 
 class ReaderTest extends TestCase
 {
     use Config;
-    
-    /**
-     * The main configuration object.
-     *
-     * @var array
-     */
-    protected $config;
 
     public function setUp(): void
     {
@@ -25,13 +18,15 @@ class ReaderTest extends TestCase
             'sources' => [
                 'default' => [
                     'driver' => 'local',
-                    'rootpath' => implode(DIRECTORY_SEPARATOR, array(__DIR__, '..', 'filesystem', 'data'))
+                    'rootpath' => implode(DIRECTORY_SEPARATOR, [__DIR__, '..', 'filesystem', 'data']),
+                    'default_file_extension' => 'json',
                 ],
                 'alternative' => [
                     'driver' => 'local',
-                    'rootpath' => implode(DIRECTORY_SEPARATOR, array(__DIR__, '..', 'filesystem', 'alternative'))
-                ]
-            ]
+                    'rootpath' => implode(DIRECTORY_SEPARATOR, [__DIR__, '..', 'filesystem', 'alternative']),
+                    'default_file_extension' => 'json',
+                ],
+            ],
         ];
     }
 
@@ -39,19 +34,22 @@ class ReaderTest extends TestCase
      * @test
      * @group Reader
      */
-    public function read_returns_the_processed_file_contents_as_json_string(): void
+    public function read_returns_the_processed_file_contents_as_array(): void
     {
-        $expected = <<<EOL
-{
-  "Hello": {
-    "content": "This is another simple Json file for testing purposes."
-  }
-}
-EOL;
+        $expected = [
+            "data" => [
+                [
+                    "key" => "FIXTURE-004",
+                    "text" => "Guess what? Yes, a sample text!",
+                    "status" => "sleeping",
+                    "updated" => "2021-10-27 10:38:06.0"
+                ]
+            ]
+        ];
 
-        $actual = Reader::read('alternative_fixture.json', $this->config('sources.alternative'));
+        $actual = Reader::read('fixture-004.json', $this->config('sources.alternative'));
 
-        $this->assertEquals($actual, $expected);
+        $this->assertEquals($expected, $actual);
     }
 
     /**
@@ -60,7 +58,8 @@ EOL;
      */
     public function read_returns_null_if_there_is_no_reader_for_the_given_mime_type(): void
     {
-        $actual = Reader::read('alternative_csv_fixture.csv', $this->config('sources.alternative'));
+        $fixtureWithUnknownMimeType = 'fixture-999.csv';
+        $actual = Reader::read($fixtureWithUnknownMimeType, $this->config('sources.alternative'));
 
         $this->assertNull($actual);
     }

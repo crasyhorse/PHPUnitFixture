@@ -5,8 +5,11 @@ namespace CrasyHorse\Testing\Loader;
 use Carbon\Carbon;
 
 /**
+ * This class represents a file read by a Loader class. It provides methods to
+ * access the file's attributes like filename, size or mime type.
  *
  * @author Florian Weidinger
+ * @since 0.1.0
  */
 class File
 {
@@ -68,6 +71,10 @@ class File
         $this->mimeType = $mimeType;
         $this->setTimestamp($timestamp);
     }
+
+    /*
+     * Getter / Setter
+     */
 
     public function getContent(): string
     {

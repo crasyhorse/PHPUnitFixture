@@ -12,6 +12,7 @@ use CrasyHorse\Testing\Loader\File;
  * things done.
  *
  * @author Florian Weidinger
+ * @since 0.1.0
  */
 class LocalLoader extends AbstractLoader
 {

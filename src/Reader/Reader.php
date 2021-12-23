@@ -4,8 +4,6 @@ namespace CrasyHorse\Testing\Reader;
 
 use CrasyHorse\Testing\Loader\Loader;
 use CrasyHorse\Testing\Reader\JsonReader;
-use CrasyHorse\Testing\Reader\UbJsonReader;
-use League\Flysystem\FileNotFoundException;
 
 /**
  * This class works as a factory for all kinds of Reader classes. It also manages the usage of
@@ -37,28 +35,21 @@ class Reader
      *
      * @param array $source Configuration object that tells us which Loader to use and where to find the file to read.
      *
-     * @return mixed
+     * @return array
      *
      */
-    public static function read(string $path, array $source)
+    public static function read(string $path, array $source): array
     {
         self::instantiateReader();
 
         self::$file = Loader::loadFixture($path, $source);
-        $content = null;
-
-        if (empty(self::$file)) {
-            throw new FileNotFoundException($path);
-        }
+        $content = [];
 
         foreach (self::$readers as $reader) {
             $result = $reader->read(self::$file);
-
-            if (!empty($result)) {
-                $content = $result;
-            }
+            $content = array_merge_recursive($content, $result);
         }
-        
+
         return $content;
     }
 
@@ -70,7 +61,7 @@ class Reader
      */
     protected static function instantiateReader(): void
     {
+        self::$readers = [];
         self::$readers[] = new JsonReader();
-        self::$readers[] = new UbJsonReader();
     }
 }

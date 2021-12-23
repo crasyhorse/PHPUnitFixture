@@ -4,6 +4,7 @@ namespace CrasyHorse\Testing\Loader;
 
 use CrasyHorse\Testing\Loader\LocalLoader;
 use CrasyHorse\Testing\Exceptions\LoaderNotFoundException;
+use League\Flysystem\FileNotFoundException;
 
 /**
  * This class works as a factory for all kinds of Loader classes. It also manages the usage of
@@ -43,7 +44,11 @@ class Loader
         $filename = self::fixFileExtension($source['default_file_extension'], $path);
         
         $file = self::load($filename, $source);
-    
+
+        if (empty($file)) {
+            throw new FileNotFoundException($path);
+        }
+
         return $file;
     }
 

@@ -5,11 +5,10 @@ namespace CrasyHorse\Testing;
 use CrasyHorse\Testing\Exceptions\SourceNotFoundException;
 use CrasyHorse\Testing\Reader\Reader;
 use CrasyHorse\Testing\Fixture\Getter;
-use CrasyHorse\Testing\Exceptions\InvalidArgumentException;
 use CrasyHorse\Testing\Fixture\Unwrap;
 
 /**
- * This is the main class of crasyhorse/testingfixture. It hold the
+ * This is the main class of crasyhorse/phpunit-fixture. It hold the
  * fixture method which should be used to load and process fixture
  * files.
  *
@@ -71,7 +70,6 @@ class Fixture
 
         foreach ($fixtures as $path) {
             $value = Reader::read($path, $this->source);
-
             $this->addToContent($value);
         }
 
@@ -87,7 +85,11 @@ class Fixture
      */
     public function source(string $sourcename): self
     {
-        $this->source = $this->config("sources.{$sourcename}") ?? $this->getDefaultSource();
+        $this->source = $this->config("sources.{$sourcename}");
+
+        if (!$this->source) {
+            throw new SourceNotFoundException();
+        }
 
         return $this;
     }
@@ -121,12 +123,8 @@ class Fixture
      * @return void
      * @throws \CrasyHorse\Testing\Exceptions\InvalidArgumentException
      */
-    protected function addToContent($value): void
+    protected function addToContent(array $value): void
     {
-        if (!is_array($value)) {
-            throw new InvalidArgumentException('Method addToContent has received an invalid argument value for $value. $value must be of type array.');
-        }
-
         $this->content = array_merge_recursive($this->content, $value);
     }
 

@@ -18,7 +18,7 @@ trait Config
      *
      * @var array
      */
-    public $configuration = [
+    protected $configuration = [
 
         /*
         |-------------------------------------------------------------------------|
@@ -44,7 +44,7 @@ trait Config
      *
      * @var array
      */
-    public $validationSchema = [
+    protected $validationSchema = [
         'driver' => '',
         'rootpath' => '',
         'default_file_extension' => ''
@@ -53,7 +53,7 @@ trait Config
     /**
      * Wrapper for Dot::get to return the configuration.
      *
-     * @param string $name the name of the configuration object to return
+     * @param string $name The name of the configuration object to return
      *
      * @return mixed
      */
@@ -79,9 +79,11 @@ trait Config
         if (!$dot->get('sources')) {
             throw new InvalidConfigurationException();
         }
-
+        
         foreach ($dot->get('sources') as $source) {
-            $diff = array_diff_key($this->validationSchema, $source);
+            $diff1 = array_diff_key($this->validationSchema, $source);
+            $diff2 = array_diff_key($source, $this->validationSchema);
+            $diff = array_merge($diff1, $diff2);
 
             if (!empty($diff)) {
                 throw new InvalidConfigurationException();

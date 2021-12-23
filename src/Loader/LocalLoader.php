@@ -5,7 +5,7 @@ namespace CrasyHorse\Testing\Loader;
 use \League\Flysystem\Adapter\Local;
 use \League\Flysystem\Filesystem;
 use CrasyHorse\Testing\Loader\AbstractLoader;
-use CrasyHorse\Testing\Loader\File;
+use League\Flysystem\FileNotFoundException;
 
 /**
  * Loads files from the local filesystem. It uses League\Flysystem\Adapter\Local to get
@@ -23,11 +23,19 @@ class LocalLoader extends AbstractLoader
      */
     public function load(string $path, array $source)
     {
-        if (strToLower($source['driver']) === strToLower($this::TYPE)) {
-            $this->filesystem = $this->initLoader($source['rootpath']);
+        try {
+            if (strToLower($source['driver']) === strToLower($this::TYPE)) {
+                $this->filesystem = $this->initLoader($source['rootpath']);
 
-            return $this->readFile($path);
+                return $this->readFile($path);
+            }
+        } catch (FileNotFoundException $e) {
+            if ($this->filepathIsLocal($path) === true) {
+                throw new FileNotFoundException($path);
+            }
         }
+
+        return null;
     }
 
     /**
@@ -38,5 +46,10 @@ class LocalLoader extends AbstractLoader
         $adapter = new Local($path);
 
         return new Filesystem($adapter);
+    }
+
+    public function filepathIsLocal(string $path): bool
+    {
+        return in_array(dirname($path), [DIRECTORY_SEPARATOR, '.', '..']);
     }
 }

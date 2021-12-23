@@ -2,14 +2,16 @@
 
 namespace CrasyHorse\Tests\Feature;
 
-use CrasyHorse\Testing\Config;
 use CrasyHorse\Testing\Reader\Reader;
 use CrasyHorse\Tests\TestCase;
 
+/**
+ * @covers \CrasyHorse\Testing\Reader\AbstractReader
+ * @covers \CrasyHorse\Testing\Reader\JsonReader
+ * @covers \CrasyHorse\Testing\Reader\Reader
+ */
 class ReaderTest extends TestCase
 {
-    use Config;
-
     public function setUp(): void
     {
         parent::setUp();
@@ -47,20 +49,35 @@ class ReaderTest extends TestCase
             ]
         ];
 
-        $actual = Reader::read('fixture-004.json', $this->config('sources.alternative'));
+        $actual = Reader::read('fixture-004.json', $this->configuration['sources']['alternative']);
 
         $this->assertEquals($expected, $actual);
     }
 
+    public function fixture_data_provider(): array
+    {
+        return [
+            'there is no reader for the given data' => [
+                'filename' => 'fixture-998.csv',
+                'source' => 'alternative'
+            ],
+            'there is a reader but the file is empty' => [
+                'filename' => 'fixture-004.json',
+                'source' => 'default'
+            ]
+        ];
+    }
     /**
      * @test
      * @group Reader
+     * @dataProvider fixture_data_provider
+     * @testdox Read returns an empty array if $_dataName
      */
-    public function read_returns_null_if_there_is_no_reader_for_the_given_mime_type(): void
+    public function read_returns_an_empty_array(string $filename, string $source): void
     {
-        $fixtureWithUnknownMimeType = 'fixture-999.csv';
-        $actual = Reader::read($fixtureWithUnknownMimeType, $this->config('sources.alternative'));
+        $fixtureWithUnknownMimeType = $filename;
+        $actual = Reader::read($fixtureWithUnknownMimeType, $this->configuration['sources'][$source]);
 
-        $this->assertNull($actual);
+        $this->assertEmpty($actual);
     }
 }

@@ -42,14 +42,9 @@ abstract class AbstractLoader implements LoaderContract
      */
     public function readFile(string $path): File
     {
-        $result = $this->filesystem->read($path);
-        $content = $result ? $result : '';
-
-        $result = $this->filesystem->getMimetype($path);
-        $mimetype = $result ? $result : null;
-
-        $result = $this->filesystem->getTimestamp($path);
-        $timestamp = $result ? $result : 0;
+        $content = $this->filesystem->read($path);
+        $mimetype = $this->filesystem->getMimetype($path);
+        $timestamp = $this->filesystem->getTimestamp($path);
 
         $result = $this->filesystem->getSize($path);
         $size = $result ? $result : 0.0;

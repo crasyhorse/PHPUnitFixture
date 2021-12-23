@@ -2,15 +2,11 @@
 
 namespace CrasyHorse\Tests\Unit;
 
-use CrasyHorse\Testing\Config;
-use CrasyHorse\Testing\Loader\File;
 use CrasyHorse\Testing\Loader\LocalLoader;
 use CrasyHorse\Tests\TestCase;
 
 class LocalLoaderTest extends TestCase
 {
-    use Config;
-
     /**
      * The loader to use to load files.
      *
@@ -41,17 +37,8 @@ class LocalLoaderTest extends TestCase
     /**
      * @test
      */
-    public function load_can_load_an_existing_file_from_local_filesystem(): void
+    public function load_can_load_an_existing_fixture_from_local_filesystem(): void
     {
-        $expected = new File(
-            'fixture-003.json',
-            '',
-            $this->config('sources.alternative')['rootpath'].'/',
-            212.0,
-            'application/json',
-            1637516068
-        );
-
         $temp = <<<EOL
 {
     "data": [
@@ -65,24 +52,22 @@ class LocalLoaderTest extends TestCase
 }
 EOL;
 
-        $content = preg_replace('~\R~u', "\r\n", $temp);
-        $expected->setContent($content);
-
+        $expected = preg_replace('~\R~u', "\r\n", $temp);
         $this->loader = new LocalLoader();
 
-        $actual = $this->loader->load('fixture-003.json', $this->config('sources.alternative'));
-
-        $this->assertEquals($expected, $actual);
+        $file = $this->loader->load('fixture-003.json', $this->configuration['sources']['alternative']);
+        $actual = $file->getContent();
+        $this->assertStringContainsString($expected, $actual);
     }
 
     /**
      * @test
      */
-    public function load_throws_an_exception_if_the_file_to_load_is_missing(): void
+    public function load_throws_an_exception_if_the_fixture_to_load_is_missing(): void
     {
         $this->expectException(\League\Flysystem\FileNotFoundException::class);
 
         $nonexistingFixtureFilename = 'fixture-999.json';
-        $actual = $this->loader->load($nonexistingFixtureFilename, $this->config('sources.alternative'));
+        $this->loader->load($nonexistingFixtureFilename, $this->configuration['sources']['alternative']);
     }
 }

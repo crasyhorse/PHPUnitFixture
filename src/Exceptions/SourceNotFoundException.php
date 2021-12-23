@@ -19,7 +19,7 @@ class SourceNotFoundException extends Exception
         $this->message = $message;
         
         if (empty($message)) {
-            $this->message = 'Neither a source nor a default source could be found. Please configure at least a default source.';
+            $this->message = 'The selected source could not be found. Please configure it or use default source.';
         }
     }
 }

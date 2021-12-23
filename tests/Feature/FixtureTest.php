@@ -2,20 +2,20 @@
 
 namespace CrasyHorse\Tests\Feature;
 
-use CrasyHorse\Testing\Config;
 use CrasyHorse\Testing\Fixture;
 use CrasyHorse\Tests\TestCase;
 
+/**
+ * @covers \CrasyHorse\Testing\Fixture
+ */
 class FixtureTest extends TestCase
 {
-    use Config;
-
     /**
      * The main configuration object.
      *
      * @var array
      */
-    protected $config;
+    protected $configuration;
 
     public function setUp(): void
     {
@@ -131,7 +131,7 @@ class FixtureTest extends TestCase
         $this->assertArrayHasKey('0', $actual['data']);
         $this->assertArrayHasKey('text', $actual['data'][0]);
         $this->assertEquals(1319588, mb_strlen($actual['data'][0]['text']));
-        $this->assertLessThanOrEqual(32768, (memory_get_peak_usage(true) / 1024));
+        $this->assertLessThanOrEqual(348160, (memory_get_peak_usage(true) / 1024));
     }
 
     /**

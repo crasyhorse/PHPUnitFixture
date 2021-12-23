@@ -3,13 +3,14 @@
 namespace CrasyHorse\Tests\Feature\Fixture;
 
 use CrasyHorse\Tests\TestCase;
-use CrasyHorse\Testing\Config;
 use CrasyHorse\Testing\Fixture;
 use CrasyHorse\Testing\Exceptions\InvalidArgumentException;
 
+/**
+ * @covers \CrasyHorse\Testing\Fixture
+ */
 class UnwrapTest extends TestCase
 {
-    use Config;
 
     /**
      * The main configuration object.
@@ -71,6 +72,7 @@ class UnwrapTest extends TestCase
     /**
      * @test
      * @dataProvider fixture_provider
+     * @testdox Unwrap unwraps the content of a fixture with valid access path "$elementToUnwrap"
      */
     public function unwrap_unwraps_content_from_element(string $fixturefile, string $elementToUnwrap, array $expected): void
     {
@@ -87,7 +89,7 @@ class UnwrapTest extends TestCase
     /**
      * @test
      */
-    public function unwrap_throws_an_exception_if_a_nonexisting_element_should_be_unwrapped(): void
+    public function unwrap_throws_an_exception_if_a_nonexistent_element_should_be_unwrapped(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The element to unwrap must exist and it must be of type array or object.');
@@ -103,7 +105,7 @@ class UnwrapTest extends TestCase
     /**
      * @test
      */
-    public function unwrap_throws_an_exception_if_the_value_of_element_to_unwrap_is_not_of_types_array_or_object(): void
+    public function unwrap_throws_an_exception_if_the_value_of_element_to_unwrap_is_not_of_one_of_the_types_array_or_object(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The element to unwrap must exist and it must be of type array or object.');
@@ -145,7 +147,7 @@ class UnwrapTest extends TestCase
     /**
      * @test
      */
-    public function unwrap_returns_the_contents_of_the_data_element_if_unwrapped(): void
+    public function unwrap_returns_the_contents_of_the_data_element_even_if_it_is_executed_without_an_argument(): void
     {
         $fixture = new Fixture($this->configuration);
 

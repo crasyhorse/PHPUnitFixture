@@ -1,0 +1,12 @@
+{
+    "data": {
+        "persons": {
+            "chloe": {
+                "firstname": "Chloe",
+                "lastname": "Smith",
+                "age": 25,
+                "gender": "female"
+            }
+        }
+    }
+}

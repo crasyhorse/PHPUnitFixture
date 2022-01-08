@@ -13,12 +13,10 @@ use Throwable;
  */
 class InvalidArgumentException extends Exception
 {
-    public function __construct(string $message = "", int $code = 0, Throwable $previous = null)
+    public function __construct(string $message, int $code = 0, Throwable $previous = null)
     {
-        $this->message = $message;
-        
-        if (empty($message)) {
-            $this->message = 'A method has received an invalid argument value for one of its parameters.';
-        }
+        parent::__construct('A method has received an invalid argument value for one of its parameters.', $code, $previous);
+
+        $this->message = sprintf('%s %s', parent::getMessage(), $message);
     }
 }

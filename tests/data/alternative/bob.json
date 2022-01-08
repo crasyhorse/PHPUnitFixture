@@ -1,0 +1,12 @@
+{
+    "data": {
+        "persons": {
+            "bob": {
+                "firstname": "Bob",
+                "lastname": "Smith",
+                "age": 23,
+                "gender": "male"
+            }
+        }
+    }
+}

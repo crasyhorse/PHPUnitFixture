@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace CrasyHorse\Testing\Exceptions;
 
 use Exception;
@@ -13,13 +15,8 @@ use Throwable;
  */
 class LoaderNotFoundException extends Exception
 {
-    public function __construct(string $message = "", int $code = 0, Throwable $previous = null, string $drivername = null)
+    public function __construct(string $driver, int $code = 0, Throwable $previous = null)
     {
-        $this->message = $message;
-        
-        if (empty($message)) {
-            $driver = $drivername ?? 'given';
-            $this->message = "Could not find a loader for the {$driver} driver.";
-        }
+        parent::__construct("Could not find a loader for the {$driver} driver.", $code, $previous);
     }
 }

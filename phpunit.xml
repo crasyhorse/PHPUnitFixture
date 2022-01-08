@@ -33,9 +33,12 @@
 
         <report>
             <html outputDirectory="reports/html-coverage" lowUpperBound="50" highLowerBound="90"/>
-            <xml outputDirectory="reports/xml-coverage"/>
+            <clover outputFile="reports/clover/clover.xml"/>
         </report>
     </coverage>
+    <logging>
+        <junit outputFile="junit.xml"/>
+    </logging>
     <php>
         <server name="APP_ENV" value="testing"/>
         <server name="BCRYPT_ROUNDS" value="4"/>

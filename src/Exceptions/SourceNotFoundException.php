@@ -14,12 +14,10 @@ use Throwable;
  */
 class SourceNotFoundException extends Exception
 {
-    public function __construct(string $message = "", int $code = 0, Throwable $previous = null)
+    public function __construct(string $source, int $code = 0, Throwable $previous = null)
     {
-        $this->message = $message;
-        
-        if (empty($message)) {
-            $this->message = 'The selected source could not be found. Please configure it or use default source.';
-        }
+        parent::__construct('', $code, $previous);
+
+        $this->message = "The selected source '{$source}' could not be found. Please configure it or use the default source.";
     }
 }

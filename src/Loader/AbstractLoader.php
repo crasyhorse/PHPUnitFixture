@@ -3,7 +3,7 @@
 namespace CrasyHorse\Testing\Loader;
 
 use CrasyHorse\Testing\Loader\LoaderContract;
-use \League\Flysystem\Filesystem;
+use League\Flysystem\Filesystem;
 use CrasyHorse\Testing\Loader\File;
 use League\Flysystem\Adapter\AbstractAdapter;
 
@@ -17,6 +17,11 @@ use League\Flysystem\Adapter\AbstractAdapter;
  */
 abstract class AbstractLoader implements LoaderContract
 {
+    /**
+     * @var string
+     */
+    protected $source;
+
     /**
      * The Flysystem\Filesystem used to read the file
      *
@@ -45,13 +50,11 @@ abstract class AbstractLoader implements LoaderContract
         $content = $this->filesystem->read($path);
         $mimetype = $this->filesystem->getMimetype($path);
         $timestamp = $this->filesystem->getTimestamp($path);
-
-        $result = $this->filesystem->getSize($path);
-        $size = $result ? $result : 0.0;
+        $size = $this->filesystem->getSize($path);
 
         $adapter = ($this->filesystem->getAdapter());
         $pathPrefix = $this->getPathPrefix($adapter);
-        
+
         return new File($path, $content, $pathPrefix, $size, $mimetype, $timestamp);
     }
 

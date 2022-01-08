@@ -1,0 +1,30 @@
+{
+  "loaders": {
+    "Local": "\\CrasyHorse\\Testing\\Loader\\LocalLoader"
+  },
+  "encoders": {
+    "base64": "\\CrasyHorse\\Testing\\Encoders\\Base64"
+  },
+  "sources": {
+    "default": {
+      "driver": "Local",
+      "root_path": "/home/fweidinger/workspace/phpunitFixture/tests/Unit/Config/../data/default",
+      "default_file_extension": "json",
+      "encode": [
+        {
+          "mime-type": "application/json",
+          "encoder": "ubjson"
+        },
+        {
+          "mime-type": "*/*",
+          "encoder": "base64"
+        }
+      ]
+    },
+    "alternative": {
+      "driver": "Local",
+      "root_path": "/home/fweidinger/workspace/phpunitFixture/tests/Unit/Config/../data/alternative",
+      "default_file_extension": "json"
+    }
+  }
+}

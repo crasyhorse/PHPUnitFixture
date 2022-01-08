@@ -1,6 +1,6 @@
 {
     "name": "crasyhorse/phpunit-fixture",
-    "version": "0.2.0",
+    "version": "0.3.0",
     "description": "Adds a fixture command to PHP-Unit tests like the one in Cypress.",
     "keywords": ["Laravel","Fixture","JSON","Testing"],
     "type": "library",
@@ -34,14 +34,16 @@
         "adbario/php-dot-notation": "2.x-dev",
         "fandogh/php-ubjson": "^0.2",
         "laravel/framework": "^8.51",
-        "pcrov/jsonreader": "dev-master"
+        "pcrov/jsonreader": "dev-master",
+        "opis/json-schema": "^2.2"
     },
     "require-dev": {
         "mockery/mockery": "^1.4.2",
         "orchestra/testbench": "^6.0",
         "phpunit/phpunit": "^9.3.3",
         "vimeo/psalm": "^4.8",
-        "league/flysystem-memory": "^1.0"
+        "league/flysystem-memory": "^1.0",
+        "friendsofphp/php-cs-fixer": "3.4.0"
     },
     "scripts": {
         "test": "vendor/bin/phpunit",

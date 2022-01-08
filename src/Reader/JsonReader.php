@@ -2,15 +2,12 @@
 
 namespace CrasyHorse\Testing\Reader;
 
-use CrasyHorse\Testing\Reader\AbstractReader;
 use CrasyHorse\Testing\Loader\File;
 use pcrov\JsonReader\JsonReader as JsonDecoder;
 
 /**
- * This class is responsible for reading and parsing fixture files of
- * mime type "application/json" or "plain/text" because sometimes the
- * mime type of a Json file is not correctly guessed as "application/json"
- * and "text/plain" is used.
+ * This class is responsible for reading and parsing fixture files with
+ * JSON content.
  *
  * @author Florian Weidinger
  * @since 0.1.0
@@ -18,11 +15,11 @@ use pcrov\JsonReader\JsonReader as JsonDecoder;
 class JsonReader extends AbstractReader
 {
     /**
-     * The default mime type to read by JsonReader.
+     * The mime type the Reader class is responsible for.
      *
      * @var string
      */
-    const TYPE='application/json';
+    public const MIME_TYPE='application/json';
 
     /**
      * The Json parser used to parse fixtures.
@@ -32,53 +29,25 @@ class JsonReader extends AbstractReader
     private $decoder;
 
     /**
-     * @inheritdoc
+     * @param string $source The name of the Config.source object to use for loading the fixture
      */
-    protected function initReader(): void
+    public function __construct(string $source)
     {
+        parent::__construct($source);
         $this->decoder = new JsonDecoder();
     }
 
     /**
-     * {@inheritdoc}
-     */
-    protected function doRead(File $file): array
-    {
-        if ($this->isValidJson($file->getContent())) {
-            return $this->decode($file->getContent());
-        }
-
-        return [];
-    }
-
-    /**
-     * Parses the Json string with pcrov/JsonReader and returns the contents
-     * as array.
-     *
-     * @param string $json The Json string to parse
-     *
-     * @return array
-     */
-    protected function decode(string $json): array
-    {
-        $this->decoder->json($json);
-        $this->decoder->read();
-        $content = $this->decoder->value() ?? [];
-        $this->decoder->close();
-        
-        return $content;
-    }
-
-    /**
-     * Uses complex regex to validate whether $json is a valid JSON string or not.
+     * Uses mime types or regex to validate whether the Reader is responsible for this type
+     * of content or not.
      *
      * The regex below is taken from @link{https://regex101.com/r/tA9pM8/1/codegen?language=php}.
      *
-     * @param string $json The Json string to validate
+     * @param string $content The content string to validate
      *
      * @return bool
      */
-    protected function isValidJson(string $json): bool
+    public function isValid(string $content): bool
     {
         $regEx = '/(?(DEFINE)
         (?<json>(?>\s*(?&object)\s*|\s*(?&array)\s*))
@@ -91,8 +60,34 @@ class JsonReader extends AbstractReader
         )
         \A(?&json)\z/x';
 
-        preg_match($regEx, $json, $matches, PREG_OFFSET_CAPTURE, 0);
+        preg_match($regEx, $content, $matches, PREG_OFFSET_CAPTURE, 0);
 
         return count($matches) > 0;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function doRead(File $file): array
+    {
+        return $this->decode($file->getContent());
+    }
+
+    /**
+     * Parses the Json string with pcrov/JsonReader and returns the contents
+     * as array.
+     *
+     * @param string $json The Json string to parse
+     *
+     * @return array
+     */
+    private function decode(string $json): array
+    {
+        $this->decoder->json($json);
+        $this->decoder->read();
+        $content = $this->decoder->value() ?? [];
+        $this->decoder->close();
+
+        return $content;
     }
 }

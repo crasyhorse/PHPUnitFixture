@@ -4,8 +4,8 @@ namespace CrasyHorse\Testing;
 
 use CrasyHorse\Testing\Exceptions\SourceNotFoundException;
 use CrasyHorse\Testing\Reader\Reader;
-use CrasyHorse\Testing\Fixture\Getter;
-use CrasyHorse\Testing\Fixture\Unwrap;
+use CrasyHorse\Testing\Config\Config;
+use CrasyHorse\Testing\Exceptions\InvalidArgumentException;
 
 /**
  * This is the main class of crasyhorse/phpunit-fixture. It hold the
@@ -17,125 +17,93 @@ use CrasyHorse\Testing\Fixture\Unwrap;
  */
 class Fixture
 {
-    use Config;
-    use Getter;
-    use Unwrap;
-
     /**
-     * The contents of the fixture(s) in an array.
+     * The contents of the fixture(s).
      *
-     * @var mixed
+     * @var \CrasyHorse\Testing\Content
      */
-    protected $content;
+    private $content;
 
     /**
      * The source to read the fixture from.
      *
-     * @var array|null
+     * @var string
      */
-    protected $source;
+    private $source;
 
-    public function __construct(array $config = [])
+    public function __construct(array $configuration)
     {
-        if (!empty($config)) {
-            $this->configuration = $this->validate($config);
-        }
+        Config::getInstance($configuration);
 
-        $this->source = $this->getDefaultSource();
-        $this->content = [];
-
-        if (!$this->source) {
-            throw new SourceNotFoundException('Could not find the default source. Please create it.');
-        }
+        $this->source = 'default';
     }
 
     /**
-     * Loads and processes a fixture. It returns an object of type
-     * \CrasyHorse\Testing\Fixture. The file contents can be returned via
-     * toArray or toJson.
      *
-     * @param mixed $fixture Path to a single fixture file or an array
-     *                       containing a list of filenames
+     * Loads and processes a fixture. It returns the contents of a fixture as
+     * an object of type \CrasyHorse\Testing\Content.
      *
-     * @return \CrasyHorse\Testing\Fixture
+     * @param string|array $fixture Path to a single fixture file or an array
+     *    containing a list of filenames
+     *
+     * @return \CrasyHorse\Testing\Content
      */
-    public function fixture($fixture): self
+    public function fixture($fixture): Content
     {
-        $fixtures = $fixture;
+        $this->content = new Content();
 
-        if (is_string($fixture)) {
-            $fixtures = [];
-            $fixtures[] = $fixture;
-        }
+        $fixtures = $this->resolveFixture($fixture);
 
         foreach ($fixtures as $path) {
             $value = Reader::read($path, $this->source);
-            $this->addToContent($value);
+            $this->content->add($value);
         }
 
-        return $this;
-    }
-
-    /**
-     * Sets the source object from where the fixture should be loaded.
-     *
-     * @param string $sourcename The name of the source object, e. g. 'alternative'
-     *
-     * @return \CrasyHorse\Testing\Fixture
-     */
-    public function source(string $sourcename): self
-    {
-        $this->source = $this->config("sources.{$sourcename}");
-
-        if (!$this->source) {
-            throw new SourceNotFoundException();
-        }
-
-        return $this;
-    }
-
-    /**
-     * Returns the file's content as array if possible. If the fixture file is empty
-     * or if it is a binary file toArray returns an empty array.
-     *
-     * @return array
-     */
-    public function toArray(): array
-    {
         return $this->content;
     }
 
     /**
-     * Returns the file's content as JSON string or null if the file has been empty.
+     * Sets the source object from where the fixture data should be loaded.
      *
-     * @return string|null
+     * @param string $sourcename The name of the source object, e. g. 'alternative'
+     *
+     * @return \CrasyHorse\Testing\Fixture
+     * @throws \CrasyHorse\Testing\Exceptions\SourceNotFoundException
      */
-    public function toJson()
+    public function source(string $sourcename): self
     {
-        return json_encode($this->content);
+        $this->source = $sourcename;
+
+        if (empty(Config::getInstance()->get("sources.{$sourcename}"))) {
+            throw new SourceNotFoundException($sourcename);
+        }
+
+        return $this;
     }
 
     /**
-     * Addes a new value to Fixture.content
+     * If $fixture is a string this method converts it into an array.
      *
-     * @param array $value The value to be added to the contents.
+     * @param string|array $fixture Path to a single fixture file or an array
+     *    containing a list of filenames
      *
-     * @return void
+     * @return array
      * @throws \CrasyHorse\Testing\Exceptions\InvalidArgumentException
      */
-    protected function addToContent(array $value): void
+    private function resolveFixture($fixture): array
     {
-        $this->content = array_merge_recursive($this->content, $value);
-    }
+        if (empty($fixture)) {
+            throw new InvalidArgumentException('$fixture must be a string or an array!');
+        }
 
-    /**
-     * Returns the default source if it is configured. Otherwise,
-     * it returns null.
-     *
-     * @return array|null
-     */
-    protected function getDefaultSource()
-    {
-        return $this->config('sources.default');
+        if (is_string($fixture)) {
+            return [$fixture];
+        }
+
+        if (is_array($fixture)) {
+            return $fixture;
+        }
+
+        throw new InvalidArgumentException('$fixture must be a string or an array!');
     }
 }

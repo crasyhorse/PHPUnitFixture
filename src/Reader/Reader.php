@@ -2,8 +2,15 @@
 
 namespace CrasyHorse\Testing\Reader;
 
+use ArrayObject;
+use ArrayIterator;
+use CrasyHorse\Testing\Exceptions\NoSuitableReaderFoundException;
 use CrasyHorse\Testing\Loader\Loader;
-use CrasyHorse\Testing\Reader\JsonReader;
+use CrasyHorse\Testing\Config\Config;
+use CrasyHorse\Testing\Exceptions\ReaderNotFoundException;
+use ReflectionClass;
+use ReflectionException;
+use CrasyHorse\Testing\Exceptions\SourceNotFoundException;
 
 /**
  * This class works as a factory for all kinds of Reader classes. It also manages the usage of
@@ -24,7 +31,7 @@ class Reader
     /**
      * A list of all available reader classes.
      *
-     * @var \CrasyHorse\Testing\Reader\ReaderContract[]
+     * @var ArrayIterator
      */
     protected static $readers;
 
@@ -33,35 +40,57 @@ class Reader
      *
      * @param string $path The path to the file to read. It is relative to the $sources['rootpath].
      *
-     * @param array $source Configuration object that tells us which Loader to use and where to find the file to read.
+     * @param string $source The name of the Config.source object to use for loading the fixture
      *
      * @return array
      *
      */
-    public static function read(string $path, array $source): array
+    public static function read(string $path, string $source): array
     {
-        self::instantiateReader();
+        $sourceObject = Config::getInstance()->get("sources.{$source}");
 
-        self::$file = Loader::loadFixture($path, $source);
-        $content = [];
-
-        foreach (self::$readers as $reader) {
-            $result = $reader->read(self::$file);
-            $content = array_merge_recursive($content, $result);
+        if (empty($sourceObject)) {
+            throw new SourceNotFoundException($source);
         }
 
-        return $content;
+        self::instantiateReader($source);
+
+        self::$file = Loader::loadFixture($path, $source);
+        $reader = self::$readers->current();
+
+        while (self::$readers->valid() && $reader->isValid(self::$file->getContent()) === false) {
+            self::$readers->next();
+            $reader = self::$readers->current();
+        }
+
+        if (empty($reader)) {
+            throw new NoSuitableReaderFoundException($path);
+        }
+
+        return $reader->read(self::$file);
     }
 
     /**
      * Adds all available reader classes to the readers list.
      *
+     * @param string $source The name of the Config.source object to use for loading the fixture
+     *
      * @return void
      *
      */
-    protected static function instantiateReader(): void
+    protected static function instantiateReader(string $source): void
     {
         self::$readers = [];
-        self::$readers[] = new JsonReader();
+        $readers = Config::getInstance()->get('readers');
+
+        try {
+            foreach ($readers as $key => $reader) {
+                self::$readers[$key] = (new ReflectionClass($reader))->newInstanceArgs([$source]);
+            }
+        } catch (ReflectionException $e) {
+            throw new ReaderNotFoundException($key);
+        }
+
+        self::$readers = (new ArrayObject(self::$readers))->getIterator();
     }
 }

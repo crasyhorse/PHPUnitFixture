@@ -17,8 +17,8 @@ PHP-Unit Fixture is configured via a PHP array. The following snippet shows a co
             'base64' => '\\CrasyHorse\\Testing\\Encoder\\Base64'
         ],
         'readers' => [
-            'Local' => '\\CrasyHorse\\Testing\\Reader\\JsonReader',
-            'Binary' => '\\CrasyHorse\\Testing\\Reader\\BinaryReader'
+            'application/json' => '\\CrasyHorse\\Testing\\Reader\\JsonReader',
+            '*/*' => '\\CrasyHorse\\Testing\\Reader\\BinaryReader'
         ],
         'sources' => [
             'default' => [
@@ -409,8 +409,8 @@ Let's say you have the following configuration object:
             'base64' => '\\CrasyHorse\\Testing\\Encoder\\Base64'
         ],
         'readers' => [
-            'Local' => '\\CrasyHorse\\Testing\\Reader\\JsonReader',
-            'Binary' => '\\CrasyHorse\\Testing\\Reader\\BinaryReader'
+            'application/json' => '\\CrasyHorse\\Testing\\Reader\\JsonReader',
+            '*/*' => '\\CrasyHorse\\Testing\\Reader\\BinaryReader'
         ],
         'sources' => [
             'default' => [

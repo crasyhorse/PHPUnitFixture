@@ -284,6 +284,7 @@ trait SourcesPropertyProvider
         $data = [
             ['message' => "valid absolute {$os} file path", 'path' => $this->buildAbsolutePath($directorySeparator, $absolutePath)],
             ['message' => "valid absolute {$os} file path (containing '..').", 'path' => implode($directorySeparator, [$absolutePath, 'data', '..', 'default'])],
+            ['message' => "valid absolute Linux file path (containing a hyphen).", 'path' => implode($directorySeparator, [$absolutePath, 'data', 'file-path', 'default'])],
         ];
 
         $relativeStartingPoints =[

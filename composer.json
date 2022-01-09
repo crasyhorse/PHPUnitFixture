@@ -1,6 +1,6 @@
 {
     "name": "crasyhorse/phpunit-fixture",
-    "version": "0.3.0",
+    "version": "0.3.1",
     "description": "Adds a fixture command to PHP-Unit tests like the one in Cypress.",
     "keywords": ["Laravel","Fixture","JSON","Testing"],
     "type": "library",

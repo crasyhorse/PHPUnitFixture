@@ -3,17 +3,25 @@
 namespace CrasyHorse\Testing\Loader;
 
 use CrasyHorse\Testing\Loader\LoaderContract;
-use \League\Flysystem\Filesystem;
+use League\Flysystem\Filesystem;
 use CrasyHorse\Testing\Loader\File;
 use League\Flysystem\Adapter\AbstractAdapter;
 
 /**
+ * Abstract base class for all Loader classes. It defines the method "readFile" used
+ * by every Loader to get read access to the fixture file. It also defines the
+ * abstract method "initLoader" every Loader has to implement.
  *
  * @author Florian Weidinger
+ * @since 0.1.0
  */
 abstract class AbstractLoader implements LoaderContract
 {
- 
+    /**
+     * @var string
+     */
+    protected $source;
+
     /**
      * The Flysystem\Filesystem used to read the file
      *
@@ -39,25 +47,21 @@ abstract class AbstractLoader implements LoaderContract
      */
     public function readFile(string $path): File
     {
-        $result = $this->filesystem->read($path);
-        $content = $result ? $result : '';
-
-        $result = $this->filesystem->getMimetype($path);
-        $mimetype = $result ? $result : null;
-
-        $result = $this->filesystem->getTimestamp($path);
-        $timestamp = $result ? $result : 0;
-
-        $result = $this->filesystem->getSize($path);
-        $size = $result ? $result : 0.0;
+        $content = $this->filesystem->read($path);
+        $mimetype = $this->filesystem->getMimetype($path);
+        $timestamp = $this->filesystem->getTimestamp($path);
+        $size = $this->filesystem->getSize($path);
 
         $adapter = ($this->filesystem->getAdapter());
         $pathPrefix = $this->getPathPrefix($adapter);
-        
+
         return new File($path, $content, $pathPrefix, $size, $mimetype, $timestamp);
     }
 
     /**
+     * Get the path prefix.
+     *
+     * @param \League\Flysystem\Adapter\AbstractAdapter $adapter The Flysystem adapter in use.
      *
      * @return string|null
      */

@@ -88,7 +88,8 @@ class Reader
                 self::$readers[$key] = (new ReflectionClass($reader))->newInstanceArgs([$source]);
             }
         } catch (ReflectionException $e) {
-            throw new ReaderNotFoundException($key);
+            $readerKey = (string) $key ?? 'unknown';
+            throw new ReaderNotFoundException($readerKey);
         }
 
         self::$readers = (new ArrayObject(self::$readers))->getIterator();

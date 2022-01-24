@@ -40,6 +40,7 @@ class Fixture
     {
         Config::getInstance($configuration);
 
+        $this->content = new Content();
         $this->source = 'default';
     }
 
@@ -55,10 +56,9 @@ class Fixture
      */
     public function fixture($fixture): Content
     {
-        $this->content = new Content();
-
         $fixtures = $this->resolveFixture($fixture);
 
+        /** @var string $path */
         foreach ($fixtures as $path) {
             $value = Reader::read($path, $this->source);
             $this->content->add($value);
@@ -105,6 +105,7 @@ class Fixture
             return [$fixture];
         }
 
+        /** @psalm-suppress RedundantConditionGivenDocblockType */
         if (is_array($fixture)) {
             return $fixture;
         }

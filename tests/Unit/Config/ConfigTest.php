@@ -107,31 +107,7 @@ class ConfigTest extends TestCase
        */
     public function executing_get_with_no_arguments_returns_the_whole_configuration(): void
     {
-        Config::reInitialize($this->configuration);
-        $this->assertEquals($this->configuration, Config::getInstance()->get());
-    }
-
-    /**
-     * @test
-     * @group Config
-     * @runInSeparateProcess
-     */
-    public function reInitialize_creates_a_new_instance_of_the_configuration_object(): void
-    {
-        Config::getInstance($this->configuration);
-        $this->assertEquals($this->configuration, Config::getInstance()->get());
-
-        $configuration = $this->createConfiguration('sources', [
-            'default' => [
-                'driver' => 'Local',
-                'root_path' => implode(DIRECTORY_SEPARATOR, [__DIR__, 'data', 'default']),
-                'default_file_extension' => 'json',
-            ]
-            ]);
-
-        Config::reInitialize($configuration);
-
-        $this->assertEquals($configuration, Config::getInstance()->get());
+        $this->assertEquals($this->configuration, (new Config($this->configuration))->get());
     }
 
     /**
@@ -142,9 +118,9 @@ class ConfigTest extends TestCase
      */
     public function source_returns_an_attribute_of_the_given_source_object(string $source, string $attribute, $expected): void
     {
-        Config::reInitialize($this->configuration);
+        $config = new Config($this->configuration);
 
-        $actual = Config::getInstance()->source($attribute, $source);
+        $actual = $config->source($attribute, $source);
 
         $this->assertEquals($expected, $actual);
     }
@@ -154,26 +130,13 @@ class ConfigTest extends TestCase
         $this->expectException($exception);
         $this->expectExceptionMessage($message);
 
-        Config::reInitialize($configurationObject);
+        $config = new Config($configurationObject);
     }
 
     private function validConfigurationObjectTest(array $configurationObject): void
     {
-        Config::reInitialize($configurationObject);
-        $this->assertEquals($configurationObject, Config::getInstance()->get());
+        $config = new Config($configurationObject);
+
+        $this->assertEquals($configurationObject, $config->get());
     }
-
-
-    // /**
-    //  * @test
-    //  * @group Config
-    //  * @testdox Validating an invalid configuration object leads to an exception. Error: $_dataName
-    //  * @dataProvider invalid_configuration_objects_provider
-    //  */
-    // public function invalid_configuration_objects_lead_to_an_exception(array $configurationObject, string $message): void
-    // {
-    //     $this->expectExceptionMessage($message);
-
-    //     Config::reInitialize($configurationObject);
-    // }
 }

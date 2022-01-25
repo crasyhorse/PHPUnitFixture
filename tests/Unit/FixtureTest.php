@@ -24,9 +24,7 @@ class FixtureTest extends TestCase
      */
     public function source_sets_object_from_where_the_fixture_should_be_loaded(): void
     {
-        Config::reInitialize($this->configuration);
         $fixture = new Fixture($this->configuration);
-
         $fixture->source('alternative');
         $resolvedContents = $fixture->fixture('fixture-003.json');
         $actual = $resolvedContents->toArray();
@@ -74,9 +72,7 @@ class FixtureTest extends TestCase
             ],
         ];
 
-        Config::reInitialize($configuration);
         $fixture = new Fixture($configuration);
-
         $fixture->source('alternative');
     }
 
@@ -88,9 +84,7 @@ class FixtureTest extends TestCase
      */
     public function fixture_loads_fixtures($fixtures, $expected, $expectedCounter): void
     {
-        Config::reInitialize($this->configuration);
         $fixture = new Fixture($this->configuration);
-
         $content = $fixture->fixture($fixtures);
         $actual = $content->toArray();
 
@@ -104,11 +98,10 @@ class FixtureTest extends TestCase
      */
     public function fixture_method_loads_a_very_large_fixture_from_a_json_file(): void
     {
-        Config::reInitialize($this->configuration);
         $fixture = new Fixture($this->configuration);
-
         $content = $fixture->fixture('fixture-003.json');
         $actual = $content->toArray();
+
         $this->assertCount(1, $actual['data']);
         $this->assertArrayHasKey('0', $actual['data']);
         $this->assertArrayHasKey('text', $actual['data'][0]);
@@ -125,9 +118,7 @@ class FixtureTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('A method has received an invalid argument value for one of its parameters. $fixture must be a string or an array!');
 
-        Config::reInitialize($this->configuration);
         $fixture = new Fixture($this->configuration);
-
         $content = $fixture->fixture(1);
     }
 
@@ -140,9 +131,7 @@ class FixtureTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('A method has received an invalid argument value for one of its parameters. $fixture must be a string or an array!');
 
-        Config::reInitialize($this->configuration);
         $fixture = new Fixture($this->configuration);
-
         $content = $fixture->fixture('');
     }
 }

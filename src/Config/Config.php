@@ -19,46 +19,13 @@ use CrasyHorse\Testing\Exceptions\InvalidConfigurationException;
 class Config
 {
     /**
-     * @var \CrasyHorse\Testing\Config\Config|null
-     */
-    private static $instance;
-
-    /**
      * @var array $configuration
      */
     protected $configuration;
 
-    private function __construct(array $configuration = [])
+    public function __construct(array $configuration = [])
     {
         $this->configuration = $this->validate($configuration);
-    }
-
-    /**
-     * Creates a new instance of the Config object (singleton).
-     *
-     * @param array $configuration The configuration object to be used for initialization.
-     *
-     * @return \CrasyHorse\Testing\Config\Config
-     */
-    public static function getInstance(array $configuration = []): self
-    {
-        if (!self::$instance) {
-            self::$instance = new self($configuration);
-        }
-
-        return self::$instance;
-    }
-
-    /**
-     * Re-initializes the Config object.
-     *
-     * @param array $configuration The configuration object to be used for initialization.
-     *
-     * @return void
-     */
-    public static function reInitialize(array $configuration): void
-    {
-        self::$instance = new self($configuration);
     }
 
     /**
@@ -137,21 +104,5 @@ class Config
         }
 
         return $configuration;
-    }
-
-    /**
-     * @codeCoverageIgnore
-     */
-    private function __clone()
-    {
-        // Empty method implementation to ensure usage of Singleton pattern.
-    }
-
-    /**
-     * @codeCoverageIgnore
-     */
-    private function __wakeup()
-    {
-        // Empty method implementation to ensure usage of Singleton pattern.
     }
 }

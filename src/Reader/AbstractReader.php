@@ -23,6 +23,11 @@ use CrasyHorse\Testing\Config\Config;
 abstract class AbstractReader implements ReaderContract
 {
     /**
+     * @var \CrasyHorse\Testing\Config\Config $configuration
+     */
+    protected $configuration;
+
+    /**
      * The encoder to be used to encode file fixture's contents.
      *
      * @var EncoderContract
@@ -36,12 +41,15 @@ abstract class AbstractReader implements ReaderContract
 
     /**
      * @param string $source The name of the Config.source object to use for loading the fixture
+     * 
+     * @param \CrasyHorse\Testing\Config\Config $configuration
      */
-    public function __construct(string $source)
+    public function __construct(string $source, Config $configuration)
     {
         $this->source = $source;
+        $this->configuration = $configuration;
 
-        $encode = Config::getInstance()->get("sources.{$source}.encode");
+        $encode = $configuration->get("sources.{$source}.encode");
 
         if ($this->sourceHasEncodings()) {
             $encodings = (new ArrayObject($encode))->getIterator();
@@ -79,7 +87,7 @@ abstract class AbstractReader implements ReaderContract
 
         if ($encoding) {
             try {
-                $encoderClass = Config::getInstance()->get("encoders.{$encoding['encoder']}");
+                $encoderClass = $this->configuration->get("encoders.{$encoding['encoder']}");
                 $this->encoder = (new ReflectionClass($encoderClass))->newInstanceArgs();
             } catch (ReflectionException $e) {
                 throw new InvalidEncodingException($encoding['encoder']);
@@ -94,7 +102,7 @@ abstract class AbstractReader implements ReaderContract
      */
     private function sourceHasEncodings(): bool
     {
-        return array_key_exists('encode', Config::getInstance()->get("sources.{$this->source}"));
+        return array_key_exists('encode', $this->configuration->get("sources.{$this->source}"));
     }
 
     /**

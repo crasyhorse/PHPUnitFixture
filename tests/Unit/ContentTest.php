@@ -25,7 +25,6 @@ class ContentTest extends TestCase
      */
     public function executing_get_with_no_arguments_returns_the_whole_contents_array($fixtures, array $expected): void
     {
-        Config::reInitialize($this->configuration);
         $fixture = new Fixture($this->configuration);
         $content = $fixture->fixture($fixtures);
 
@@ -41,7 +40,6 @@ class ContentTest extends TestCase
      */
     public function executing_get_with_one_single_string_argument_uses_array_dot_notation_to_access_content(string $dotNotation, $expected): void
     {
-        Config::reInitialize($this->configuration);
         $fixture = new Fixture($this->configuration);
         $content = $fixture->fixture(['fixture-001.json', 'fixture-002.json']);
 
@@ -56,7 +54,6 @@ class ContentTest extends TestCase
      */
     public function getFromArray_returns_null_if_content_is_empty(): void
     {
-        Config::reInitialize($this->configuration);
         $fixture = new Fixture($this->configuration);
         $content = $fixture->fixture('fixture-004.json');
 
@@ -71,9 +68,7 @@ class ContentTest extends TestCase
      */
     public function tojson_returns_the_json_representation_of_the_resolved_fixture_content(): void
     {
-        Config::reInitialize($this->configuration);
         $fixture = new Fixture($this->configuration);
-
         $content = $fixture->fixture('fixture-001.json');
         $actual = $content->toJson();
 
@@ -97,7 +92,6 @@ class ContentTest extends TestCase
      */
     public function unwrap_returns_the_complete_content_if_executed_with_no_argument_and_data_element_does_not_exist(): void
     {
-        Config::reInitialize($this->configuration);
         $fixture = new Fixture($this->configuration);
 
         $actual = $fixture->source('alternative')
@@ -125,7 +119,6 @@ class ContentTest extends TestCase
      */
     public function unwrap_returns_the_contents_of_the_data_element_even_if_it_is_executed_without_an_argument(): void
     {
-        Config::reInitialize($this->configuration);
         $fixture = new Fixture($this->configuration);
 
         $actual = $fixture->source('alternative')
@@ -153,7 +146,6 @@ class ContentTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The element to unwrap must exist and it must be of type array or object.');
 
-        Config::reInitialize($this->configuration);
         $fixture = new Fixture($this->configuration);
 
         $fixture->source('alternative')
@@ -171,7 +163,6 @@ class ContentTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The element to unwrap must exist and it must be of type array or object.');
 
-        Config::reInitialize($this->configuration);
         $fixture = new Fixture($this->configuration);
 
         $fixture->source('alternative')
@@ -188,7 +179,6 @@ class ContentTest extends TestCase
      */
     public function unwrap_unwraps_content_from_element(string $fixturefile, string $elementToUnwrap, array $expected): void
     {
-        Config::reInitialize($this->configuration);
         $fixture = new Fixture($this->configuration);
 
         $actual = $fixture->source('alternative')

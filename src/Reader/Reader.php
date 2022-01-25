@@ -21,6 +21,12 @@ use CrasyHorse\Testing\Exceptions\SourceNotFoundException;
  */
 class Reader
 {
+
+    /**
+     * @var \CrasyHorse\Testing\Config\Config $configuration
+     */
+    protected static $configuration;
+
     /**
      * An object holding the attributes of the file to read.
      *
@@ -41,13 +47,17 @@ class Reader
      * @param string $path The path to the file to read. It is relative to the $sources['rootpath].
      *
      * @param string $source The name of the Config.source object to use for loading the fixture
+     * 
+     * @param \CrasyHorse\Testing\Config\Config $configuration
      *
      * @return array
      *
      */
-    public static function read(string $path, string $source): array
+    public static function read(string $path, string $source, Config $configuration): array
     {
-        $sourceObject = Config::getInstance()->get("sources.{$source}");
+        self::$configuration = $configuration;
+
+        $sourceObject = self::$configuration->get("sources.{$source}");
 
         if (empty($sourceObject)) {
             throw new SourceNotFoundException($source);
@@ -55,7 +65,7 @@ class Reader
 
         self::instantiateReader($source);
 
-        self::$file = Loader::loadFixture($path, $source);
+        self::$file = Loader::loadFixture($path, $source, $configuration);
         $reader = self::$readers->current();
 
         while (self::$readers->valid() && $reader->isValid(self::$file->getContent()) === false) {
@@ -81,11 +91,11 @@ class Reader
     protected static function instantiateReader(string $source): void
     {
         self::$readers = [];
-        $readers = Config::getInstance()->get('readers');
+        $readers = self::$configuration->get('readers');
 
         try {
             foreach ($readers as $key => $reader) {
-                self::$readers[$key] = (new ReflectionClass($reader))->newInstanceArgs([$source]);
+                self::$readers[$key] = (new ReflectionClass($reader))->newInstanceArgs([$source, self::$configuration]);
             }
         } catch (ReflectionException $e) {
             $readerKey = (string) $key ?? 'unknown';

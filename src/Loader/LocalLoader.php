@@ -23,10 +23,10 @@ class LocalLoader extends AbstractLoader
     /**
      * @inheritdoc
      */
-    public function load(string $path, string $source): File
+    public function load(string $path, string $source, Config $configuration): File
     {
         try {
-            $rootPath = Config::getInstance()->get("sources.{$source}.root_path");
+            $rootPath = $configuration->get("sources.{$source}.root_path");
             $this->filesystem = $this->initLoader($rootPath);
 
             return $this->readFile($path);

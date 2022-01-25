@@ -3,7 +3,6 @@
 namespace CrasyHorse\Testing\Loader;
 
 use CrasyHorse\Testing\Exceptions\LoaderNotFoundException;
-use CrasyHorse\Testing\Loader\File;
 use CrasyHorse\Testing\Config\Config;
 use ReflectionClass;
 use ReflectionException;
@@ -18,6 +17,11 @@ use ReflectionException;
 class Loader
 {
     /**
+     * @var \CrasyHorse\Testing\Config\Config $configuration
+     */
+    private static $configuration;
+
+    /**
      * An associative array of Loader classes
      *
      * @var \CrasyHorse\Testing\Loader\LoaderContract[]
@@ -31,15 +35,19 @@ class Loader
      *
      * @param string $source The name of the Config.source object to use for loading the fixture
      *
-     * @return \CrasyHorse\Testing\Loader\File
+     * @param \CrasyHorse\Testing\Config\Config $configuration
+     *
+     * @return \CrasyHorse\Testing\Loader\File|null
      *
      * @throws \CrasyHorse\Testing\Exceptions\LoaderNotFoundException
      */
-    public static function loadFixture(string $path, string $source): File
+    public static function loadFixture(string $path, string $source, Config $configuration)
     {
+        self::$configuration = $configuration;
         self::instantiateLoader();
 
-        $defaultFileExtension = Config::getInstance()->get("sources.{$source}.default_file_extension");
+        /** @var string $defaultFileExtension */
+        $defaultFileExtension = self::$configuration->get("sources.{$source}.default_file_extension");
         $filename = self::fixFileExtension($defaultFileExtension, $path);
 
         return self::load($filename, $source);
@@ -68,13 +76,15 @@ class Loader
      */
     protected static function instantiateLoader(): void
     {
-        $loaders = Config::getInstance()->get('loaders');
+        $loaders = self::$configuration->get('loaders');
 
         try {
+            /** @var array<array-key, LoaderContract> $loaders */
             foreach ($loaders as $key => $loader) {
-                self::$loaders[$key] = (new ReflectionClass($loader))->newInstanceArgs();
+                self::$loaders[$key] = (new ReflectionClass($loader))->newInstanceArgs([]);
             }
         } catch (ReflectionException $e) {
+            /** @var string $key */
             throw new LoaderNotFoundException($key);
         }
     }
@@ -92,8 +102,9 @@ class Loader
      */
     protected static function load(string $path, string $source)
     {
-        $loader = Config::getInstance()->get("sources.{$source}.driver");
+        /** @var string $loader */
+        $loader = self::$configuration->get("sources.{$source}.driver");
 
-        return self::$loaders[$loader]->load($path, $source);
+        return self::$loaders[$loader]->load($path, $source, self::$configuration);
     }
 }

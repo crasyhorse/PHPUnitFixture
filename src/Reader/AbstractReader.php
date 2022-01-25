@@ -23,9 +23,14 @@ use CrasyHorse\Testing\Config\Config;
 abstract class AbstractReader implements ReaderContract
 {
     /**
+     * @var \CrasyHorse\Testing\Config\Config $configuration
+     */
+    protected $configuration;
+
+    /**
      * The encoder to be used to encode file fixture's contents.
      *
-     * @var EncoderContract
+     * @var EncoderContract|null
      */
     protected $encoder;
 
@@ -36,27 +41,37 @@ abstract class AbstractReader implements ReaderContract
 
     /**
      * @param string $source The name of the Config.source object to use for loading the fixture
+     *
+     * @param \CrasyHorse\Testing\Config\Config $configuration
      */
-    public function __construct(string $source)
+    public function __construct(string $source, Config $configuration)
     {
         $this->source = $source;
+        $this->configuration = $configuration;
 
-        $encode = Config::getInstance()->get("sources.{$source}.encode");
+        /** @var array $encode */
+        $encode = $configuration->get("sources.{$source}.encode");
 
         if ($this->sourceHasEncodings()) {
+            /** @var ArrayIterator<array-key, object|null> */
             $encodings = (new ArrayObject($encode))->getIterator();
             $this->initEncoder($encodings);
         }
     }
 
     /**
-     * @inheritdoc
+     * Reads the contents of a {@link File}. The file is getting processor by the responsible Reader class.
+     * The responsible reader is determined by the file type.
+     *
+     * @param \CrasyHorse\Testing\Loader\File $file The file to read.
+     *
+     * @return array|null
      */
-    public function read(File $file): array
+    public function read(File $file)
     {
         $content = $this->doRead($file);
 
-        if ($this->encoder) {
+        if ($this->encoder && $content) {
             return $this->encoder->encode($content);
         }
 
@@ -70,17 +85,21 @@ abstract class AbstractReader implements ReaderContract
      */
     private function initEncoder(ArrayIterator $encodings): void
     {
+        /** @var object|null $encoding */
         $encoding = $encodings->current();
 
         while ($encodings->valid() && $encoding['mime-type'] !== static::MIME_TYPE) {
             $encodings->next();
+            /** @var object|null $encoding */
             $encoding = $encodings->current();
         }
 
         if ($encoding) {
             try {
-                $encoderClass = Config::getInstance()->get("encoders.{$encoding['encoder']}");
-                $this->encoder = (new ReflectionClass($encoderClass))->newInstanceArgs();
+                /** @var class-string $encoderClass */
+                $encoderClass = $this->configuration->get("encoders.{$encoding['encoder']}");
+                /** @var EncoderContract */
+                $this->encoder = (new ReflectionClass($encoderClass))->newInstanceArgs([]);
             } catch (ReflectionException $e) {
                 throw new InvalidEncodingException($encoding['encoder']);
             }
@@ -94,7 +113,9 @@ abstract class AbstractReader implements ReaderContract
      */
     private function sourceHasEncodings(): bool
     {
-        return array_key_exists('encode', Config::getInstance()->get("sources.{$this->source}"));
+        /** @var array $sourceObject */
+        $sourceObject = $this->configuration->get("sources.{$this->source}");
+        return array_key_exists('encode', $sourceObject);
     }
 
     /**
@@ -102,7 +123,7 @@ abstract class AbstractReader implements ReaderContract
      *
      * @param \CrasyHorse\Testing\Loader\File $file
      *
-     * @return array
+     * @return array|null
      */
-    abstract protected function doRead(File $file): array;
+    abstract protected function doRead(File $file);
 }

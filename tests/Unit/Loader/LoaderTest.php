@@ -54,8 +54,8 @@ class LoaderTest extends TestCase
 EOL;
 
         $expected = preg_replace('~\R~u', "\r\n", $temp);
-        Config::reInitialize($this->configuration);
-        $file = Loader::loadFixture($data['filename'], 'alternative');
+        $config = new Config($this->configuration);
+        $file = Loader::loadFixture($data['filename'], 'alternative', $config);
         $actual = $file->getContent();
 
         $this->assertStringContainsString($expected, $actual);
@@ -68,8 +68,8 @@ EOL;
      */
     public function loads_an_empty_fixture_file(): void
     {
-        Config::reInitialize($this->configuration);
-        $file = Loader::loadFixture('fixture-004', 'default');
+        $config = new Config($this->configuration);
+        $file = Loader::loadFixture('fixture-004', 'default', $config);
 
         $this->assertEquals('', $file->getContent());
         $this->assertEquals(0.0, $file->getSize());
@@ -82,7 +82,7 @@ EOL;
     /**
      * @test
      * @group Loader
-     * @testdox InstantiateLoader throws an exception it $_dataName
+     * @testdox InstantiateLoader throws an exception if $_dataName
      */
     public function instantiateLoader_throws_an_exception_if_an_unknown_loader_class_is_configured(): void
     {
@@ -109,8 +109,8 @@ EOL;
             ],
         ];
 
-        Config::reInitialize($configuration);
-        $file = Loader::loadFixture('fixture-004', 'default');
+        $config = new Config($configuration);
+        $file = Loader::loadFixture('fixture-004', 'default', $config);
     }
     /**
      * @test
@@ -121,8 +121,8 @@ EOL;
     {
         $this->expectException(FileNotFoundException::class);
 
-        Config::reInitialize($this->configuration);
-        $file = Loader::loadFixture('fixture-666', 'default');
+        $config = new Config($this->configuration);
+        $file = Loader::loadFixture('fixture-666', 'default', $config);
     }
 
     /**
@@ -134,7 +134,7 @@ EOL;
     {
         $this->expectException(FileNotFoundException::class);
 
-        Config::reInitialize($this->configuration);
-        Loader::loadFixture('http://www.fileserver.de/fixture-003.json', 'default');
+        $config = new Config($this->configuration);
+        Loader::loadFixture('http://www.fileserver.de/fixture-003.json', 'default', $config);
     }
 }

@@ -22,6 +22,11 @@ use CrasyHorse\Testing\Exceptions\SourceNotFoundException;
 class Reader
 {
     /**
+     * @var \CrasyHorse\Testing\Config\Config $configuration
+     */
+    protected static $configuration;
+
+    /**
      * An object holding the attributes of the file to read.
      *
      * @var \CrasyHorse\Testing\Loader\File|null
@@ -31,7 +36,7 @@ class Reader
     /**
      * A list of all available reader classes.
      *
-     * @var ArrayIterator
+     * @var array
      */
     protected static $readers;
 
@@ -42,31 +47,38 @@ class Reader
      *
      * @param string $source The name of the Config.source object to use for loading the fixture
      *
-     * @return array
+     * @param \CrasyHorse\Testing\Config\Config $configuration
+     *
+     * @return array<array-key, mixed>|null
      *
      */
-    public static function read(string $path, string $source): array
+    public static function read(string $path, string $source, Config $configuration): array
     {
-        $sourceObject = Config::getInstance()->get("sources.{$source}");
+        self::$configuration = $configuration;
+
+        $sourceObject = self::$configuration->get("sources.{$source}");
 
         if (empty($sourceObject)) {
             throw new SourceNotFoundException($source);
         }
 
         self::instantiateReader($source);
+        $readerIterator = (new ArrayObject(self::$readers))->getIterator();
 
-        self::$file = Loader::loadFixture($path, $source);
-        $reader = self::$readers->current();
+        self::$file = Loader::loadFixture($path, $source, $configuration);
 
-        while (self::$readers->valid() && $reader->isValid(self::$file->getContent()) === false) {
-            self::$readers->next();
-            $reader = self::$readers->current();
+        $reader = $readerIterator->current();
+
+        while ($readerIterator->valid() && $reader->isValid(self::$file->getContent()) === false) {
+            $readerIterator->next();
+            $reader = $readerIterator->current();
         }
 
         if (empty($reader)) {
             throw new NoSuitableReaderFoundException($path);
         }
 
+        /** @var ReaderContract $reader */
         return $reader->read(self::$file);
     }
 
@@ -81,17 +93,16 @@ class Reader
     protected static function instantiateReader(string $source): void
     {
         self::$readers = [];
-        $readers = Config::getInstance()->get('readers');
+        /** @var array<array-key,class-string> $readers */
+        $readers = self::$configuration->get('readers');
 
         try {
             foreach ($readers as $key => $reader) {
-                self::$readers[$key] = (new ReflectionClass($reader))->newInstanceArgs([$source]);
+                self::$readers[$key] = (new ReflectionClass($reader))->newInstanceArgs([$source, self::$configuration]);
             }
         } catch (ReflectionException $e) {
             $readerKey = (string) $key ?? 'unknown';
             throw new ReaderNotFoundException($readerKey);
         }
-
-        self::$readers = (new ArrayObject(self::$readers))->getIterator();
     }
 }

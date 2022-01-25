@@ -4,6 +4,7 @@ namespace CrasyHorse\Testing\Reader;
 
 use CrasyHorse\Testing\Loader\File;
 use pcrov\JsonReader\JsonReader as JsonDecoder;
+use CrasyHorse\Testing\Config\Config;
 
 /**
  * This class is responsible for reading and parsing fixture files with
@@ -30,10 +31,12 @@ class JsonReader extends AbstractReader
 
     /**
      * @param string $source The name of the Config.source object to use for loading the fixture
+     *
+     * @param \CrasyHorse\Testing\Config\Config $configuration
      */
-    public function __construct(string $source)
+    public function __construct(string $source, Config $configuration)
     {
-        parent::__construct($source);
+        parent::__construct($source, $configuration);
         $this->decoder = new JsonDecoder();
     }
 
@@ -66,9 +69,13 @@ class JsonReader extends AbstractReader
     }
 
     /**
-     * {@inheritdoc}
+     * Does all the work necessary work to read a file (e. g. decompress it or convert it to JSON)
+     *
+     * @param \CrasyHorse\Testing\Loader\File $file
+     *
+     * @return array|null
      */
-    protected function doRead(File $file): array
+    protected function doRead(File $file)
     {
         return $this->decode($file->getContent());
     }
@@ -79,12 +86,14 @@ class JsonReader extends AbstractReader
      *
      * @param string $json The Json string to parse
      *
-     * @return array
+     * @return array|null
      */
-    private function decode(string $json): array
+    private function decode(string $json)
     {
         $this->decoder->json($json);
         $this->decoder->read();
+
+        /** @var array|null $content */
         $content = $this->decoder->value() ?? [];
         $this->decoder->close();
 

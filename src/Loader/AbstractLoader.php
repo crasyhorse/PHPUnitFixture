@@ -18,11 +18,6 @@ use League\Flysystem\Adapter\AbstractAdapter;
 abstract class AbstractLoader implements LoaderContract
 {
     /**
-     * @var string
-     */
-    protected $source;
-
-    /**
      * The Flysystem\Filesystem used to read the file
      *
      * @var \League\Flysystem\Filesystem
@@ -47,11 +42,19 @@ abstract class AbstractLoader implements LoaderContract
      */
     public function readFile(string $path): File
     {
+        /** @var string $content */
         $content = $this->filesystem->read($path);
+
+        /** @var string $mimetype */
         $mimetype = $this->filesystem->getMimetype($path);
+
+        /** @var int $timestamp */
         $timestamp = $this->filesystem->getTimestamp($path);
+
+        /** @var float $size */
         $size = $this->filesystem->getSize($path);
 
+        /** @var  \League\Flysystem\Adapter\AbstractAdapter $adapter */
         $adapter = ($this->filesystem->getAdapter());
         $pathPrefix = $this->getPathPrefix($adapter);
 

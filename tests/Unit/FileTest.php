@@ -31,9 +31,8 @@ class FileTest extends TestCase
 }
 EOL;
 
-        Config::reInitialize($this->configuration);
         $expectedContent = preg_replace('~\R~u', "\r\n", $temp);
-        $actual = Loader::loadFixture('fixture-003.json', 'alternative');
+        $actual = Loader::loadFixture('fixture-003.json', 'alternative', new Config($this->configuration));
 
         $this->assertEquals($expectedContent, $actual->getContent());
         $this->assertEquals(212.0, $actual->getSize());

@@ -17,6 +17,7 @@ class InvalidConfigurationException extends Exception
     {
         parent::__construct('Your configuration object is malformed. Please check it!', $code, $previous);
 
+        /** @var array<array-key, string> $messages */
         $this->message = implode(PHP_EOL, array_merge([parent::getMessage()], $messages));
     }
 }

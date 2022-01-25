@@ -17,7 +17,7 @@ class Base64 implements EncoderContract
      */
     public function encode(array $content): array
     {
-        $convertedContent = $content[0];
+        $convertedContent = (string)$content[0];
         return [base64_encode($convertedContent)];
     }
 }

@@ -18,7 +18,7 @@ class Content
     /**
      * The resolve content of the fixture(s).
      *
-     * @var string|array
+     * @var array
      */
     private $content;
 
@@ -66,6 +66,7 @@ class Content
 
         $dot = new Dot($this->content);
 
+        /** @var array|string */
         return $dot->get($dotnotation);
     }
 
@@ -138,6 +139,10 @@ class Content
 
         if (empty($value)) {
             return $this->content;
+        }
+
+        if (is_string($value)) {
+            return [$value];
         }
 
         return $value;

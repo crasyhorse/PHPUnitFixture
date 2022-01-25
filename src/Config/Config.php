@@ -19,7 +19,7 @@ use CrasyHorse\Testing\Exceptions\InvalidConfigurationException;
 class Config
 {
     /**
-     * @var \CrasyHorse\Testing\Config\Config
+     * @var \CrasyHorse\Testing\Config\Config|null
      */
     private static $instance;
 
@@ -72,6 +72,8 @@ class Config
     public function get(string $name = null)
     {
         $dot = new Dot($this->configuration);
+
+        /** @var array|string|null */
         return $dot->get($name);
     }
 
@@ -109,12 +111,15 @@ class Config
     private function validate(array $configuration): array
     {
         $validator = new Validator();
-        $validator->resolver()
-            ->registerFile(
-                'https://github.com/crasyhorse/PHPUnitFixture/configSchema.json',
-                __DIR__ . DIRECTORY_SEPARATOR . 'configSchema.json'
-            );
+        $resolver = $validator->resolver();
 
+        /** @var \Opis\JsonSchema\Resolvers\SchemaResolver $resolver */
+        $resolver->registerFile(
+            'https://github.com/crasyhorse/PHPUnitFixture/configSchema.json',
+            __DIR__ . DIRECTORY_SEPARATOR . 'configSchema.json'
+        );
+
+        /** @var object $data */
         $data = Helper::toJSON($configuration);
         $result = $validator->validate(
             $data,
@@ -123,8 +128,12 @@ class Config
 
         if (!$result->isValid()) {
             $formatter = new ErrorFormatter();
-            $validationErrors = $formatter->formatFlat($result->error());
-            throw new InvalidConfigurationException($validationErrors);
+
+            /** @var \Opis\JsonSchema\Errors\ValidationError $validationErrors */
+            $validationErrors = $result->error();
+            $formattedValidationErrors = $formatter->formatFlat($validationErrors);
+
+            throw new InvalidConfigurationException($formattedValidationErrors);
         }
 
         return $configuration;

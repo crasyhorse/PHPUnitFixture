@@ -3,6 +3,7 @@
 namespace CrasyHorse\Testing\Loader;
 
 use CrasyHorse\Testing\Loader\File;
+use CrasyHorse\Testing\Config\Config;
 
 /**
  * Defines all necessary methods for classes of type Loader.
@@ -19,9 +20,11 @@ interface LoaderContract
      *
      * @param string $source The name of the Config.source object to use for loading the fixture
      *
+     * @param \CrasyHorse\Testing\Config\Config $configuration
+     * 
      * @return \CrasyHorse\Testing\Loader\File
      *
      * @throws \League\Flysystem\FileNotFoundException
      */
-    public function load(string $path, string $source): File;
+    public function load(string $path, string $source, Config $configuration): File;
 }

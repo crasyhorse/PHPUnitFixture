@@ -19,6 +19,11 @@ use CrasyHorse\Testing\Reader\Reader;
 class Fixture
 {
     /**
+     * @var \CrasyHorse\Testing\Config\Config $configuration
+     */
+    protected $configuration;
+
+    /**
      * The contents of the fixture(s).
      *
      * @var \CrasyHorse\Testing\Content
@@ -34,7 +39,7 @@ class Fixture
 
     public function __construct(array $configuration)
     {
-        Config::getInstance($configuration);
+        $this->configuration = new Config($configuration);
 
         $this->source = 'default';
     }
@@ -75,7 +80,7 @@ class Fixture
     {
         $this->source = $sourcename;
 
-        if (empty(Config::getInstance()->get("sources.{$sourcename}"))) {
+        if (empty($this->configuration->get("sources.{$sourcename}"))) {
             throw new SourceNotFoundException($sourcename);
         }
 

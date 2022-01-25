@@ -34,8 +34,8 @@ class ReaderTest extends TestCase
         $this->expectExceptionMessage("The selected source 'alternative' could not be found. Please configure it or use the default source.");
 
         $configuration = $this->getConfiguration();
-        Config::reInitialize($configuration);
-        Reader::read('fixture-998.csv', 'alternative');
+        $config = new Config($configuration);
+        Reader::read('fixture-998.csv', 'alternative', $config);
     }
 
     /**
@@ -59,8 +59,8 @@ class ReaderTest extends TestCase
             ]
         ]);
 
-        Config::reInitialize($configuration);
-        Reader::read('fixture-998.csv', 'alternative');
+        $config = new Config($configuration);
+        Reader::read('fixture-998.csv', 'alternative', $config);
     }
 
     /**
@@ -76,8 +76,8 @@ class ReaderTest extends TestCase
             'application/json' => '\\CrasyHorse\\Testing\\JsonReader'
         ]);
 
-        Config::reInitialize($configuration);
-        Reader::read('fixture-001.json', 'default');
+        $config = new Config($configuration);
+        Reader::read('fixture-001.json', 'default', $config);
     }
 
     /**
@@ -102,8 +102,8 @@ class ReaderTest extends TestCase
             $configuration
         );
 
-        Config::reInitialize($configuration);
-        $actual = Reader::read($filename, 'alternative');
+        $config = new Config($configuration);
+        $actual = Reader::read($filename, 'alternative', $config);
 
         $this->assertEquals($expected, $actual);
     }
@@ -134,9 +134,9 @@ class ReaderTest extends TestCase
             $configuration
         );
 
-        Config::reInitialize($configuration);
+        $config = new Config($configuration);
         $expected = ['RklYVFVSRS0wMDMsT25jZSBhZ2FpbiBhIHNhbXBsZSB0ZXh0ISxvcGVuLDIwMjEtMTAtMjcgMTA6Mzc6MTQuMApGSVhUVVJFLTAwNCxHdWVzcyB3aGF0PyBZZXMsIGEgc2FtcGxlIHRleHQhLHNsZWVwaW5nLDIwMjEtMTAtMjcgMTA6Mzg6MDYuMAo='];
-        $actual = Reader::read('fixture-998.csv', 'alternative');
+        $actual = Reader::read('fixture-998.csv', 'alternative', $config);
 
         $this->assertEquals($expected, $actual);
     }
@@ -159,8 +159,8 @@ class ReaderTest extends TestCase
         $configuration = $this->deleteProperty('readers.*/*', $configuration);
         $configuration = $this->deleteProperty('source.default.encode', $configuration);
 
-        Config::reInitialize($configuration);
-        Reader::read('fixture-998.csv', 'alternative');
+        $config = new Config($configuration);
+        Reader::read('fixture-998.csv', 'alternative', $config);
     }
 
     public function fixture_provider(): array

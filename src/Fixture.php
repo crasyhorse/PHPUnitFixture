@@ -60,7 +60,7 @@ class Fixture
         $fixtures = $this->resolveFixture($fixture);
 
         foreach ($fixtures as $path) {
-            $value = Reader::read($path, $this->source);
+            $value = Reader::read($path, $this->source, $this->configuration);
             $this->content->add($value);
         }
 

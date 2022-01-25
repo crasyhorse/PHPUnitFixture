@@ -102,6 +102,6 @@ class Loader
     {
         $loader = self::$configuration->get("sources.{$source}.driver");
 
-        return self::$loaders[$loader]->load($path, $source);
+        return self::$loaders[$loader]->load($path, $source, self::$configuration);
     }
 }

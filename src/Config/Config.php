@@ -23,7 +23,7 @@ class Config
      */
     protected $configuration;
 
-    private function __construct(array $configuration = [])
+    public function __construct(array $configuration = [])
     {
         $this->configuration = $this->validate($configuration);
     }
@@ -95,21 +95,5 @@ class Config
         }
 
         return $configuration;
-    }
-
-    /**
-     * @codeCoverageIgnore
-     */
-    private function __clone()
-    {
-        // Empty method implementation to ensure usage of Singleton pattern.
-    }
-
-    /**
-     * @codeCoverageIgnore
-     */
-    private function __wakeup()
-    {
-        // Empty method implementation to ensure usage of Singleton pattern.
     }
 }

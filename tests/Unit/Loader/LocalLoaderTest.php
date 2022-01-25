@@ -47,8 +47,8 @@ EOL;
         $expected = preg_replace('~\R~u', "\r\n", $temp);
         $this->loader = new LocalLoader();
 
-        Config::reInitialize($this->configuration);
-        $file = $this->loader->load('fixture-003.json', 'alternative');
+        $config = new Config($this->configuration);
+        $file = $this->loader->load('fixture-003.json', 'alternative', $config);
         $actual = $file->getContent();
         $this->assertStringContainsString($expected, $actual);
     }
@@ -61,8 +61,8 @@ EOL;
     {
         $this->expectException(\League\Flysystem\FileNotFoundException::class);
 
-        Config::reInitialize($this->configuration);
+        $config = new Config($this->configuration);
         $nonexistingFixtureFilename = 'fixture-999.json';
-        $this->loader->load($nonexistingFixtureFilename, 'alternative');
+        $this->loader->load($nonexistingFixtureFilename, 'alternative', $config);
     }
 }

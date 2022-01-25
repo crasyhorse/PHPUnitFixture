@@ -4,6 +4,7 @@ namespace CrasyHorse\Testing\Reader;
 
 use CrasyHorse\Testing\Loader\File;
 use pcrov\JsonReader\JsonReader as JsonDecoder;
+use CrasyHorse\Testing\Config\Config;
 
 /**
  * This class is responsible for reading and parsing fixture files with
@@ -30,10 +31,12 @@ class JsonReader extends AbstractReader
 
     /**
      * @param string $source The name of the Config.source object to use for loading the fixture
+     *
+     * @param \CrasyHorse\Testing\Config\Config $configuration
      */
-    public function __construct(string $source)
+    public function __construct(string $source, Config $configuration)
     {
-        parent::__construct($source);
+        parent::__construct($source, $configuration);
         $this->decoder = new JsonDecoder();
     }
 

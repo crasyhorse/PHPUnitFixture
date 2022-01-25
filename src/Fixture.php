@@ -56,6 +56,8 @@ class Fixture
      */
     public function fixture($fixture): Content
     {
+        $this->content = new Content();
+
         $fixtures = $this->resolveFixture($fixture);
 
         /** @var string $path */

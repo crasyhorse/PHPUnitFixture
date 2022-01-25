@@ -48,6 +48,7 @@ abstract class AbstractReader implements ReaderContract
             $this->initEncoder($encodings);
         }
     }
+
     /**
      * @inheritdoc
      */

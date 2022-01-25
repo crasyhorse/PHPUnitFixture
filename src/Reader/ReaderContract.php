@@ -18,10 +18,9 @@ interface ReaderContract
      *
      * @param \CrasyHorse\Testing\Loader\File $file The file to read.
      *
-     * @return array
-     *
+     * @return array|null
      */
-    public function read(File $file): array;
+    public function read(File $file);
 
     /**
      * Uses mime types or regex to validate whether the Reader is responsible for this type

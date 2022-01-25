@@ -69,9 +69,13 @@ class JsonReader extends AbstractReader
     }
 
     /**
-     * {@inheritdoc}
+     * Does all the work necessary work to read a file (e. g. decompress it or convert it to JSON)
+     *
+     * @param \CrasyHorse\Testing\Loader\File $file
+     *
+     * @return array|null
      */
-    protected function doRead(File $file): array
+    protected function doRead(File $file)
     {
         return $this->decode($file->getContent());
     }
@@ -82,12 +86,14 @@ class JsonReader extends AbstractReader
      *
      * @param string $json The Json string to parse
      *
-     * @return array
+     * @return array|null
      */
-    private function decode(string $json): array
+    private function decode(string $json)
     {
         $this->decoder->json($json);
         $this->decoder->read();
+
+        /** @var array|null $content */
         $content = $this->decoder->value() ?? [];
         $this->decoder->close();
 

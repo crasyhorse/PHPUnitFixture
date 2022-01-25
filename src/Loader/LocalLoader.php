@@ -6,7 +6,6 @@ use League\Flysystem\Adapter\Local;
 use League\Flysystem\Filesystem;
 use CrasyHorse\Testing\Loader\AbstractLoader;
 use League\Flysystem\FileNotFoundException;
-use CrasyHorse\Testing\Loader\File;
 use CrasyHorse\Testing\Config\Config;
 
 /**
@@ -21,11 +20,22 @@ use CrasyHorse\Testing\Config\Config;
 class LocalLoader extends AbstractLoader
 {
     /**
-     * @inheritdoc
+     * Returns the data of a fixture.
+     *
+     * @param string $path The absolute path to the file
+     *
+     * @param string $source The name of the Config.source object to use for loading the fixture
+     *
+     * @param \CrasyHorse\Testing\Config\Config $configuration
+     *
+     * @return \CrasyHorse\Testing\Loader\File|null
+     *
+     * @throws \League\Flysystem\FileNotFoundException
      */
-    public function load(string $path, string $source, Config $configuration): File
+    public function load(string $path, string $source, Config $configuration)
     {
         try {
+            /** @var string $rootPath */
             $rootPath = $configuration->get("sources.{$source}.root_path");
             $this->filesystem = $this->initLoader($rootPath);
 
@@ -37,8 +47,6 @@ class LocalLoader extends AbstractLoader
 
             throw $e;
         }
-
-        return null;
     }
 
     /**

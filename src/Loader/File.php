@@ -78,7 +78,7 @@ class File
 
     public function getContent(): string
     {
-        return $this->content;
+        return (string)$this->content;
     }
 
     public function setContent(string $content): void
@@ -126,7 +126,7 @@ class File
         return $this->path;
     }
 
-    public function setPath(string $path): void
+    public function setPath(string $path = null): void
     {
         $this->path = $path;
     }
@@ -151,7 +151,7 @@ class File
         return $this->mimeType;
     }
 
-    public function setMimeType(string $mimeType): void
+    public function setMimeType(string $mimeType = null): void
     {
         $this->mimeType = $mimeType;
     }

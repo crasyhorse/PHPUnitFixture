@@ -21,7 +21,6 @@ use CrasyHorse\Testing\Exceptions\SourceNotFoundException;
  */
 class Reader
 {
-
     /**
      * @var \CrasyHorse\Testing\Config\Config $configuration
      */
@@ -37,7 +36,7 @@ class Reader
     /**
      * A list of all available reader classes.
      *
-     * @var ArrayIterator
+     * @var array
      */
     protected static $readers;
 
@@ -47,10 +46,10 @@ class Reader
      * @param string $path The path to the file to read. It is relative to the $sources['rootpath].
      *
      * @param string $source The name of the Config.source object to use for loading the fixture
-     * 
+     *
      * @param \CrasyHorse\Testing\Config\Config $configuration
      *
-     * @return array
+     * @return array<array-key, mixed>|null
      *
      */
     public static function read(string $path, string $source, Config $configuration): array
@@ -64,19 +63,22 @@ class Reader
         }
 
         self::instantiateReader($source);
+        $readerIterator = (new ArrayObject(self::$readers))->getIterator();
 
         self::$file = Loader::loadFixture($path, $source, $configuration);
-        $reader = self::$readers->current();
 
-        while (self::$readers->valid() && $reader->isValid(self::$file->getContent()) === false) {
-            self::$readers->next();
-            $reader = self::$readers->current();
+        $reader = $readerIterator->current();
+
+        while ($readerIterator->valid() && $reader->isValid(self::$file->getContent()) === false) {
+            $readerIterator->next();
+            $reader = $readerIterator->current();
         }
 
         if (empty($reader)) {
             throw new NoSuitableReaderFoundException($path);
         }
 
+        /** @var ReaderContract $reader */
         return $reader->read(self::$file);
     }
 
@@ -91,6 +93,7 @@ class Reader
     protected static function instantiateReader(string $source): void
     {
         self::$readers = [];
+        /** @var array<array-key,class-string> $readers */
         $readers = self::$configuration->get('readers');
 
         try {
@@ -101,7 +104,5 @@ class Reader
             $readerKey = (string) $key ?? 'unknown';
             throw new ReaderNotFoundException($readerKey);
         }
-
-        self::$readers = (new ArrayObject(self::$readers))->getIterator();
     }
 }

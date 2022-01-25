@@ -48,6 +48,7 @@ abstract class AbstractReader implements ReaderContract
             $this->initEncoder($encodings);
         }
     }
+
     /**
      * @inheritdoc
      */
@@ -65,7 +66,7 @@ abstract class AbstractReader implements ReaderContract
     /**
      * Returns true if the mime-type of the reader class is mentioned in the source's encode property.
      *
-     * @return bool
+     * @return void
      */
     private function initEncoder(ArrayIterator $encodings): void
     {

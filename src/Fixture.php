@@ -31,10 +31,16 @@ class Fixture
      */
     private $source;
 
-    public function __construct(array $configuration)
+    /**
+     * Validates the configuration object given by the user.
+     *
+     * @param array $configuration The custom configuration object
+     */
+    public function __construct(array $configuration = [])
     {
         Config::getInstance($configuration);
 
+        $this->content = new Content();
         $this->source = 'default';
     }
 
@@ -54,6 +60,7 @@ class Fixture
 
         $fixtures = $this->resolveFixture($fixture);
 
+        /** @var string $path */
         foreach ($fixtures as $path) {
             $value = Reader::read($path, $this->source);
             $this->content->add($value);
@@ -100,6 +107,7 @@ class Fixture
             return [$fixture];
         }
 
+        /** @psalm-suppress RedundantConditionGivenDocblockType */
         if (is_array($fixture)) {
             return $fixture;
         }

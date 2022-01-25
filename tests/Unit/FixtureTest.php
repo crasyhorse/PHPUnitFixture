@@ -6,7 +6,7 @@ use CrasyHorse\Testing\Fixture;
 use CrasyHorse\Tests\TestCase;
 use CrasyHorse\Testing\Exceptions\SourceNotFoundException;
 use CrasyHorse\Testing\Exceptions\InvalidArgumentException;
-use CrasyHorse\Testing\Config\Config;
+use CrasyHorse\Testing\Exceptions\InvalidConfigurationException;
 
 /**
  * @covers CrasyHorse\Testing\Fixture
@@ -133,5 +133,17 @@ class FixtureTest extends TestCase
 
         $fixture = new Fixture($this->configuration);
         $content = $fixture->fixture('');
+    }
+
+    /**
+     * @test
+     * @group Fixture
+     */
+    public function fixture_throws_an_exception_if_called_with_an_empty_configuration_object(): void
+    {
+        $this->expectException(InvalidConfigurationException::class);
+        $this->expectExceptionMessage('Your configuration object is malformed. Please check it!');
+
+        $fixture = new Fixture();
     }
 }
